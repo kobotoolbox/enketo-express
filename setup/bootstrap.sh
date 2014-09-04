@@ -19,7 +19,7 @@ echo 'updating enketo app to latest version'
 apt-get install -y git
 cd $ENKETO_EXPRESS_REPO_DIR
 # The next line should be commented out during development or any case where the repository was cloned via the ssh URL (i.e. git@github.com:kobotoolbox/enketo-express.git) as opposed to the HTTPS.
-[ $ENKETO_EXPRESS_UPDATE_REPO = "true" ] && git pull origin master
+[ $ENKETO_EXPRESS_UPDATE_REPO = "true" ] && git pull
 git submodule update --init --recursive
 
 # further redis setup with persistence, security, logging, multiple instances, priming 
