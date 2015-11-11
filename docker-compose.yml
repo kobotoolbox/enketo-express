@@ -1,0 +1,20 @@
+redis_main:
+  image: redis:2.6
+  volumes:
+    - .redis-enketo-main.conf:/etc/redis/redis.conf
+
+redis_cache:
+  image: redis:2.6
+  volumes:
+    - .redis-enketo-main.conf:/etc/redis/redis.conf
+
+enketo_express:
+  build: .
+  ports:
+    - "8005"
+  links:
+    - redis_main
+    - redis_cache
+# DEBUG
+#  volumes:
+#  - .:/srv/enketo-express # Make sure to clear out your `node_modules`!
