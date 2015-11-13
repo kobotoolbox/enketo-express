@@ -3,9 +3,9 @@ FROM ubuntu:trusty
 EXPOSE 8005
 ENTRYPOINT ["bash", "docker_entrypoint.bash"]
 
-####################
-# apt-get installs #
-####################
+################
+# apt installs #
+################
 
 WORKDIR /srv
 RUN apt-get update && \
@@ -17,16 +17,12 @@ RUN apt-get install -y $(cat apt_packages.txt)
 # Non-interactive equivalent of `dpkg-reconfigure -plow unattended-upgrades` (see https://blog.sleeplessbeastie.eu/2015/01/02/how-to-perform-unattended-upgrades/).
 RUN cp /usr/share/unattended-upgrades/20auto-upgrades /etc/apt/apt.conf.d/20auto-upgrades
 
-################
-# install node #
-################
-
-RUN npm install -g grunt-cli pm2
 
 ###############################
 # Enketo Express Installation #
 ###############################
 
+RUN npm install -g grunt-cli pm2
 # Checks out a fresh copy of the repo.
 RUN git clone https://github.com/enketo/enketo-express.git
 WORKDIR /srv/enketo-express

@@ -11,10 +11,12 @@ redis_cache:
 enketo_express:
   build: .
   ports:
-    - "8005"
+    - "8005:8005"
   links:
     - redis_main
     - redis_cache
-# DEBUG
+  env_file:
+    - docker_envfile.txt
+# DEBUG: For mapping this host directory into the container.
 #  volumes:
 #  - .:/srv/enketo-express # Make sure to clear out your `node_modules`!

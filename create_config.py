@@ -33,23 +33,23 @@ def create_config():
     if offline_enabled:
         config['offline enabled']= 'True'
 
-    config.setdefault('linked form and data server',{})['server url']= \
-        os.environ.get('FORM_DATA_SERVER_URL', 'kobocat')
-    api_key= os.environ.get('ENKETO_API_KEY')
-    if api_key is not None:
-        config['linked form and data server']['api key']= api_key
+    config['linked form and data server']= dict()
+    config['linked form and data server']['api key']= os.environ['ENKETO_API_KEY']
+    config['linked form and data server']['server url']= os.environ.get('ENKETO_FORM_DATA_SERVER_URL', 'kobocat')
     config['linked form and data server']['encryption key']= get_encryption_key()
 
-    config.setdefault('redis',{})['main']= {'host': os.environ.get('ENKETO_REDIS_MAIN_HOST', 'redis_main'), 
-                                            'port': os.environ.get('ENKETO_REDIS_MAIN_PORT', '6379'),
-                                            'password': os.environ.get('ENKETO_REDIS_MAIN_PASSWORD', None),
-                                           }
+    config['redis']= dict()
+    config['redis']['main']= {'host': os.environ.get('ENKETO_REDIS_MAIN_HOST', 'redis_main'), 
+                              'port': os.environ.get('ENKETO_REDIS_MAIN_PORT', '6379'),
+                              'password': os.environ.get('ENKETO_REDIS_MAIN_PASSWORD', None),
+                             }
+
     config['redis']['cache']= {'host': os.environ.get('ENKETO_REDIS_CACHE_HOST', 'redis_cache'),
                                'port': os.environ.get('ENKETO_REDIS_CACHE_PORT', '6379'),
                                'password': os.environ.get('ENKETO_REDIS_CACHE_PASSWORD', None),
                               }
 
-    CONFIG_FILE_PATH= os.environ.get('ENKETO_CONFIG_FILE_PATH', os.path.join(CURRENT_DIR_PATH, 'config/config.json'))
+    CONFIG_FILE_PATH= os.path.join(CURRENT_DIR_PATH, 'config/config.json')
     with open(CONFIG_FILE_PATH, 'w') as config_file:
         config_file.write(json.dumps(config, indent=4))
 
