@@ -4,6 +4,10 @@ import os
 
 
 CURRENT_DIR_PATH= os.path.abspath(os.path.dirname(__file__))
+PROJECT_ROOT_PATH= os.path.abspath(os.path.join(CURRENT_DIR_PATH, '../..'))
+print CURRENT_DIR_PATH
+print os.path.abspath(os.path.join(PROJECT_ROOT_PATH, 'setup/docker'))
+assert CURRENT_DIR_PATH == os.path.abspath(os.path.join(PROJECT_ROOT_PATH, 'setup/docker'))
 
 
 def get_encryption_key():
@@ -49,7 +53,7 @@ def create_config():
                                'password': os.environ.get('ENKETO_REDIS_CACHE_PASSWORD', None),
                               }
 
-    CONFIG_FILE_PATH= os.path.join(CURRENT_DIR_PATH, 'config/config.json')
+    CONFIG_FILE_PATH= os.path.join(PROJECT_ROOT_PATH, 'config/config.json')
     with open(CONFIG_FILE_PATH, 'w') as config_file:
         config_file.write(json.dumps(config, indent=4))
 

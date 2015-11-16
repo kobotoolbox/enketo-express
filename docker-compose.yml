@@ -1,12 +1,14 @@
 redis_main:
   image: redis:2.6
+  # Map our "main" Redis config into the container.
   volumes:
-    - .redis-enketo-main.conf:/etc/redis/redis.conf
+    - ./setup/redis/conf/redis-enketo-main.conf:/etc/redis/redis.conf
 
 redis_cache:
   image: redis:2.6
+  # Map our "cache" Redis config into the container.
   volumes:
-    - .redis-enketo-main.conf:/etc/redis/redis.conf
+    - ./setup/redis/conf/redis-enketo-cache.conf:/etc/redis/redis.conf
 
 enketo_express:
   build: .
@@ -16,7 +18,7 @@ enketo_express:
     - redis_main
     - redis_cache
   env_file:
-    - docker_envfile.txt
+    - ./setup/docker/envfile.txt
 # DEBUG: For mapping this host directory into the container.
-#  volumes:
-#  - .:/srv/enketo-express # Make sure to clear out your `node_modules`!
+  # volumes:
+  #   - .:/srv/enketo-express  # Make sure to clear out your `node_modules`!

@@ -14,4 +14,5 @@ config/config.json
 .nodemon-*
 .DS_Store
 enketo-main.rdb
-docker_envfile.txt
+setup/docker/envfile.txt
+setup/docker/secrets

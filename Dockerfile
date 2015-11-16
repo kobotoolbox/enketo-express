@@ -1,7 +1,7 @@
 FROM ubuntu:trusty
 
 EXPOSE 8005
-ENTRYPOINT ["bash", "docker_entrypoint.bash"]
+CMD ["bash", "/srv/enketo-express/setup/docker/entrypoint.bash"]
 
 ################
 # apt installs #
@@ -12,7 +12,7 @@ RUN apt-get update && \
     apt-get upgrade -y
 RUN apt-get install -y curl && \
     curl -sL https://deb.nodesource.com/setup_0.10 | bash -
-COPY apt_packages.txt .
+COPY ./setup/docker/apt_packages.txt /srv/
 RUN apt-get install -y $(cat apt_packages.txt)
 # Non-interactive equivalent of `dpkg-reconfigure -plow unattended-upgrades` (see https://blog.sleeplessbeastie.eu/2015/01/02/how-to-perform-unattended-upgrades/).
 RUN cp /usr/share/unattended-upgrades/20auto-upgrades /etc/apt/apt.conf.d/20auto-upgrades
@@ -29,9 +29,9 @@ WORKDIR /srv/enketo-express
 RUN npm cache clean &&\
     npm install
 
-# Persist the `secrets` directory so the encryption key remains consistent.
-VOLUME /srv/enketo-express/secrets
-
 # FIXME: Manually copy over these files right now since they're not yet in the `master` branch.
-COPY create_config.py .
-COPY docker_entrypoint.bash .
+COPY ./setup/docker /srv/enketo-express/setup/docker
+
+# Persist the `secrets` directory so the encryption key remains consistent.
+RUN mkdir -p /srv/enketo-express/setup/docker/secrets
+VOLUME /srv/enketo-express/setup/docker/secrets
