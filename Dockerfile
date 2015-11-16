@@ -29,9 +29,7 @@ WORKDIR /srv/enketo-express
 RUN npm cache clean &&\
     npm install
 
-# FIXME: Manually copy over these files right now since they're not yet in the `master` branch.
-COPY ./setup/docker /srv/enketo-express/setup/docker
-
 # Persist the `secrets` directory so the encryption key remains consistent.
 RUN mkdir -p /srv/enketo-express/setup/docker/secrets
 VOLUME /srv/enketo-express/setup/docker/secrets
+
