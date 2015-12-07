@@ -4,6 +4,7 @@ var communicator = require( '../lib/communicator' );
 var surveyModel = require( '../models/survey-model' );
 var userModel = require( '../models/user-model' );
 var instanceModel = require( '../models/instance-model' );
+var submissionModel = require( '../models/submission-model' );
 var utils = require( '../lib/utils' );
 var request = require( 'request' );
 var express = require( 'express' );
@@ -54,8 +55,11 @@ function submit( req, res, next ) {
     var paramName = req.app.get( 'query parameter to pass to submission' );
     var paramValue = req.query[ paramName ];
     var query = ( paramValue ) ? '?' + paramName + '=' + paramValue : '';
+    var instanceId = req.headers[ 'x-openrosa-instance-id' ];
+    var deprecatedId = req.headers[ 'x-openrosa-deprecated-id' ];
+    var id = req.enketoId;
 
-    surveyModel.get( req.enketoId )
+    surveyModel.get( id )
         .then( function( survey ) {
             submissionUrl = communicator.getSubmissionUrl( survey.openRosaServer ) + query;
             credentials = userModel.getCredentials( req );
@@ -72,7 +76,11 @@ function submit( req, res, next ) {
             };
 
             // pipe the request 
-            req.pipe( request( options ) ).pipe( res );
+            req.pipe( request( options ) ).on( 'response', function( orResponse ) {
+                if ( orResponse.statusCode === 201 ) {
+                    _logSubmission( id, instanceId, deprecatedId );
+                }
+            } ).pipe( res );
 
         } )
         .catch( next );
@@ -120,7 +128,21 @@ function getInstance( req, res, next ) {
                         throw error;
                     }
                 } ).catch( next );
-
         } )
         .catch( next );
+}
+
+function _logSubmission( id, instanceId, deprecatedId ) {
+    submissionModel.isNew( id, instanceId )
+        .then( function( notRecorded ) {
+            if ( notRecorded ) {
+                // increment number of submissions
+                surveyModel.incrementSubmissions( id );
+                // store instanceId
+                submissionModel.add( id, instanceId, deprecatedId );
+            }
+        } )
+        .catch( function( error ) {
+            console.error( error );
+        } );
 }

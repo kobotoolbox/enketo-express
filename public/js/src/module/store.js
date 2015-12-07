@@ -6,6 +6,7 @@
 
 var db = require( 'db.js' );
 var utils = require( './utils' );
+var sniffer = require( './sniffer' );
 var t = require( './translator' );
 
 var server;
@@ -18,100 +19,124 @@ var available = false;
 var databaseName = 'enketo';
 
 function init() {
-    return db.open( {
-            server: databaseName,
-            version: 1,
-            schema: {
-                // the surveys
-                surveys: {
-                    key: {
-                        keyPath: 'enketoId',
-                        autoIncrement: false
-                    },
-                    indexes: {
-                        enketoId: {
-                            unique: true
-                        }
-                    }
-                },
-                // the resources that belong to a survey
-                resources: {
-                    key: {
-                        autoIncrement: false
-                    },
-                    indexes: {
+
+    return _checkSupport()
+        .then( function() {
+            return db.open( {
+                server: databaseName,
+                version: 1,
+                schema: {
+                    // the surveys
+                    surveys: {
                         key: {
-                            unique: true
-                        }
-                    }
-                },
-                // Records in separate table because it makes more sense for getting, updating and removing records
-                // if they are not stored in one (giant) array or object value.
-                // Need to watch out for bad iOS bug: http://www.raymondcamden.com/2014/9/25/IndexedDB-on-iOS-8--Broken-Bad
-                // but with the current keys there is no risk of using the same key in multiple tables.
-                // InstanceId is the key because instanceName may change when editing a draft.
-                records: {
-                    key: {
-                        keyPath: 'instanceId',
-                    },
-                    indexes: {
-                        // useful to check if name exists
-                        name: {
-                            unique: true
+                            keyPath: 'enketoId',
+                            autoIncrement: false
                         },
-                        // the actual key
-                        instanceId: {
-                            unique: true
+                        indexes: {
+                            enketoId: {
+                                unique: true
+                            }
+                        }
+                    },
+                    // the resources that belong to a survey
+                    resources: {
+                        key: {
+                            autoIncrement: false
                         },
-                        // to get all records belonging to a form
-                        enketoId: {
-                            unique: false
+                        indexes: {
+                            key: {
+                                unique: true
+                            }
                         }
-                    }
-                },
-                // the files that belong to a record
-                files: {
-                    key: {
-                        autoIncrement: false
                     },
-                    indexes: {
+                    // Records in separate table because it makes more sense for getting, updating and removing records
+                    // if they are not stored in one (giant) array or object value.
+                    // Need to watch out for bad iOS bug: http://www.raymondcamden.com/2014/9/25/IndexedDB-on-iOS-8--Broken-Bad
+                    // but with the current keys there is no risk of using the same key in multiple tables.
+                    // InstanceId is the key because instanceName may change when editing a draft.
+                    records: {
                         key: {
-                            unique: true
+                            keyPath: 'instanceId',
+                        },
+                        indexes: {
+                            // useful to check if name exists
+                            name: {
+                                unique: true
+                            },
+                            // the actual key
+                            instanceId: {
+                                unique: true
+                            },
+                            // to get all records belonging to a form
+                            enketoId: {
+                                unique: false
+                            }
                         }
-                    }
-                },
-                // settings or other global app properties
-                properties: {
-                    key: {
-                        keyPath: 'name',
-                        autoIncrement: false
                     },
-                    indexes: {
+                    // the files that belong to a record
+                    files: {
                         key: {
-                            unique: true
+                            autoIncrement: false
+                        },
+                        indexes: {
+                            key: {
+                                unique: true
+                            }
+                        }
+                    },
+                    // settings or other global app properties
+                    properties: {
+                        key: {
+                            keyPath: 'name',
+                            autoIncrement: false
+                        },
+                        indexes: {
+                            key: {
+                                unique: true
+                            }
                         }
                     }
                 }
-            }
+            } );
         } )
         .then( function( s ) {
             server = s;
-            console.debug( 'WHoohoeeee, we\'ve got ourselves a database! Now let\'s check if it works properly.' );
+            console.debug( 'WHoohoeeee, we\'ve got ourselves a da tabase! Now let\'s check if it works properly.' );
         } )
         .then( _isWriteable )
         .then( _setBlobStorageEncoding )
         .then( function() {
             available = true;
         } )
-        .catch( function( e ) {
-            console.error( 'store initialization error', error );
+        .catch( function( error ) {
+            console.error( 'store initialization error', error.message );
             // make error more useful and throw it further down the line
-            var error = new Error( t( 'store.error.notavailable', {
-                error: e.message
+            error = ( typeof error === 'string' ) ? new Error( error ) : error;
+            error = error ? error : new Error( t( 'store.error.notavailable', {
+                error: error.message
             } ) );
             error.status = 500;
             throw error;
         } );
+}
+
+
+function _checkSupport() {
+    var error;
+    // best to perform this specific check ourselves and not rely on specific error message in db.js.
+    return new Promise( function( resolve, reject ) {
+        if ( typeof indexedDB === "object" ) {
+            resolve();
+        } else {
+            if ( sniffer.browser.isOnIos() ) {
+                error = new Error( t( 'store.error.iosusesafari' ) );
+            } else {
+                error = new Error( t( 'store.error.notsupported' ) );
+            }
+            error.status = 500;
+            reject( error );
+        }
+    } );
 }
 
 function isAvailable() {
@@ -130,6 +155,21 @@ function _canStoreBlobs() {
     var aBlob = new Blob( [ '<a id="a"><b id="b">hey!</b></a>' ], {
         type: 'text/xml'
     } );
+
+    /*
+     * Chrome appears to store blobs fine, but after a few hours, when retreiving a blob,
+     * and creating an ObjectURL from it, the object URL returns a 404. 
+     * Similarly, trying to use FileReader to readAsDataURL, results in a null result.
+     *
+     * Last checked in Chrome 46
+     *
+     * https://github.com/kobotoolbox/enketo-express/issues/155
+     */
+    if ( sniffer.browser.isChrome() ) {
+        console.debug( 'This is Chrome which has a blob/file storage problem.' );
+        return Promise.reject();
+    }
+
     return propertyStore.update( {
         name: 'testBlobWrite',
         value: aBlob
@@ -242,19 +282,21 @@ surveyStore = {
             throw new Error( 'Survey not complete' );
         }
 
-        survey.resources = survey.resources || [];
-
-        // build array of resource keys
-        resourceKeys = survey.resources.map( function( resource ) {
-            return resource.url;
-        } );
+        // note: if survey.resources = undefined/null, do not store empty array
+        // as it means there are no resources to store (and load)
+        if ( survey.resources ) {
+            // build array of resource keys
+            resourceKeys = survey.resources.map( function( resource ) {
+                return resource.url;
+            } );
+        }
 
         return server.surveys.get( survey.enketoId )
             .then( function( result ) {
                 // determine obsolete resources to be removed
                 if ( result.resources ) {
                     obsoleteResources = result.resources.filter( function( existing ) {
-                        return resourceKeys.indexOf( existing ) < 0;
+                        return !resourceKeys || resourceKeys.indexOf( existing ) < 0;
                     } );
                 }
                 // update the existing survey
@@ -266,14 +308,17 @@ surveyStore = {
                     theme: survey.theme,
                     resources: resourceKeys,
                     maxSize: survey.maxSize,
-                    externalData: survey.externalData
+                    externalData: survey.externalData,
+                    branding: survey.branding
                 } );
             } )
             .then( function() {
-                // add new or update existing resources
-                survey.resources.forEach( function( file ) {
-                    tasks.push( surveyStore.resource.update( survey.enketoId, file ) );
-                } );
+                if ( survey.resources ) {
+                    // add new or update existing resources
+                    survey.resources.forEach( function( file ) {
+                        tasks.push( surveyStore.resource.update( survey.enketoId, file ) );
+                    } );
+                }
                 // remove obsolete resources
                 obsoleteResources.forEach( function( key ) {
                     tasks.push( surveyStore.resource.remove( survey.enketoId, key ) );
@@ -369,10 +414,13 @@ recordStore = {
                 record.files.forEach( function( fileKey ) {
                     tasks.push( recordStore.file.get( record.instanceId, fileKey ) );
                 } );
-
                 return Promise.all( tasks )
                     .then( function( files ) {
-                        record.files = files;
+                        // filter out the failed files (= undefined)
+                        files = files.filter( function( file ) {
+                            return file;
+                        } );
+                        record.files = files || [];
                         return record;
                     } );
             } );
@@ -618,7 +666,7 @@ function _getFile( table, id, key ) {
     return new Promise( function( resolve, reject ) {
         if ( table === 'resources' || table === 'files' ) {
             prop = ( table === 'resources' ) ? 'url' : 'name';
-            server[ table ].get( id + ':' + key )
+            return server[ table ].get( id + ':' + key )
                 .then( function( item ) {
                     file[ prop ] = key;
                     if ( item instanceof Blob ) {

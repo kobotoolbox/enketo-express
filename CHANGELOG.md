@@ -2,10 +2,52 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-[Unreleased]
+[1.21.1] - 2015-12-07
+---------------------
+##### Changed
+- Show helpful "Use Safari on iOS" message when unsupported iOS browser is used.
+- Updated Slovak, Dutch and Norwegian translations.
+
+##### Fixed
+- Empty error dialog when form fails to load.
+- Form footer margins incorrect.
+- Media & data form resource retrieval does not work with "external authentication".
+- Media missing from submission in offline-capable views.
+
+##### Removed
+- "Experimental" warning message
+
+[1.21.0] - 2015-12-01
+---------------------
+##### Added
+- InstanceID logging of successful submissions (optional feature, **off by default**).
+
+##### Fixed
+- Submission counters not updated upon successful submission.
+- Node 4 incompatibility.
+
+[1.20.4] - 2015-11-25
+---------------------
+##### Added
+- Slovak translation.
+
+##### Changed
+- Updated Italian, Dutch and German translations.
+- Redirect all IE users to /modern-browsers page.
+
+##### Fixed
+- Clicking brand logo link with '#' value messes up offline views.
+- Several issues where updating form media files did not properly update the form caches on server and client.
+- File uploads in Chrome in offline-capable view fail to load after an hour (workaround for browser bug).
+- If accompanying file for record cannot be retrieved, upload is blocked forever.
+- NodeJS 0.12 incompatibility.
+
+[1.20.3] - 2015-11-13
 ---------------------
 ##### Fixed
+- If form resource retrieval fails, it won't be re-attempted upon next load
 - Chevron icons in timepicker not shown.
+- Current() does not switch context instance for relative paths in an XPath predicate.
 
 [1.20.2] - 2015-11-02
 ---------------------
@@ -400,7 +442,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -----------
 ##### Fixed
 - Repeat groups not working when they have no \<group\> wrapper.
-- Multipe markdown links in a note are merged into one.
+- Multiple markdown links in a note are merged into one.
 
 [1.5.0] - 2014-12-30
 -----------

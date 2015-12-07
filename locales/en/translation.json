@@ -163,6 +163,7 @@
     "encryptionnotsupported": "This form requires local encryption of records. Unfortunately this not yet supported. We recommend using ODK Collect for data collection with this form.",
     "instancenotfound": "Record not present. It may have expired.",
     "invalidediturl": "Not a valid edit URL",
+    "loadfailed": "Failed to load __resource__",
     "notfoundinformlist": "Form with ID __formId__ not found in /formList",
     "pagenotfound": "Page not Found",
     "surveyidnotactive": "Survey with this ID no longer active",
@@ -200,16 +201,20 @@
   },
   "langs": {
     "ar": "Arabic",
+    "cs": "Czech",
     "de": "German",
     "el": "Greek",
     "en": "English",
     "es": "Spanish",
+    "fr": "French",
     "he": "Hebrew",
     "hi": "Hindi",
+    "it": "Italian",
     "km": "Khmer",
     "nl": "Dutch",
     "no": "Norwegian",
     "ro": "Romanian",
+    "sk": "Slovak",
     "supported": "Languages supported: ",
     "sw": "Swahili",
     "th": "Thai",
@@ -252,7 +257,9 @@
   },
   "store": {
     "error": {
-      "notavailable": "Browser storage is required but is not available, is corrupted, or is not writeable. If you are in 'private browsing' mode please switch to regular mode, otherwise switch to another browser. (error: __error__)"
+      "iosusesafari": "Your iOS browser is not able to run this form. On iOS, we recommend using Safari.",
+      "notavailable": "Browser storage is required but is not available, is corrupted, or is not writeable. If you are in 'private browsing' mode please switch to regular mode, otherwise switch to another browser. (error: __error__)",
+      "notsupported": "Your browser is not able to run this form. We recommend using a modern browser."
     }
   },
   "submission": {

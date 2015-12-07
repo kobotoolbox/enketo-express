@@ -85,6 +85,8 @@ function uploadRecord( record ) {
 
     batches.forEach( function( batch ) {
         batch.formData.append( 'Date', new Date().toUTCString() );
+        batch.instanceId = record.instanceId;
+        batch.deprecatedId = record.deprecatedId;
         tasks.push( _uploadBatch( batch ) );
     } );
 
@@ -102,9 +104,6 @@ function uploadRecord( record ) {
  * @return {Promise}      [description]
  */
 function _uploadBatch( recordBatch ) {
-
-    console.log( 'uploading batch with failed Files', recordBatch.failedFiles );
-
     return new Promise( function( resolve, reject ) {
         $.ajax( SUBMISSION_URL, {
                 type: 'POST',
@@ -113,7 +112,9 @@ function _uploadBatch( recordBatch ) {
                 contentType: false,
                 processData: false,
                 headers: {
-                    'X-OpenRosa-Version': '1.0'
+                    'X-OpenRosa-Version': '1.0',
+                    'X-OpenRosa-Deprecated-Id': recordBatch.deprecatedId,
+                    'X-OpenRosa-Instance-Id': recordBatch.instanceId
                 },
                 timeout: 300 * 1000
             } )
@@ -186,8 +187,8 @@ function _prepareFormDataArray( record ) {
             } );
             sizes.push( file.size );
         } else {
-            failedFiles.push( file.name );
-            console.error( 'Error occured when trying to retrieve ' + file.name );
+            failedFiles.push( fileName );
+            console.error( 'Error occured when trying to retrieve ' + fileName );
         }
     } );
 
@@ -198,8 +199,8 @@ function _prepareFormDataArray( record ) {
     console.debug( 'splitting record into ' + batches.length + ' batches to reduce submission size ', batches );
 
     batches.forEach( function( batch ) {
-        var batchPrepped,
-            fd = new FormData();
+        var batchPrepped;
+        var fd = new FormData();
 
         fd.append( 'xml_submission_file', xmlSubmissionBlob );
 
@@ -211,7 +212,7 @@ function _prepareFormDataArray( record ) {
 
         // add any media files to the batch
         batch.forEach( function( fileIndex ) {
-            batchPrepped.formData.append( submissionFiles[ fileIndex ].nodeName, submissionFiles[ fileIndex ].file );
+            batchPrepped.formData.append( submissionFiles[ fileIndex ].nodeName, submissionFiles[ fileIndex ].file, submissionFiles[ fileIndex ].file.name );
         } );
 
         // push the batch to the array
@@ -379,17 +380,25 @@ function _getExternalData( survey ) {
  * @return {Promise} [description]
  */
 function getMediaFile( url ) {
+    var error;
     var xhr = new XMLHttpRequest();
 
     return new Promise( function( resolve, reject ) {
         xhr.onreadystatechange = function() {
-            if ( this.readyState === 4 && this.status === 200 ) {
-                resolve( {
-                    url: url,
-                    item: this.response
-                } );
+            if ( this.readyState === 4 ) {
+                if ( this.status >= 200 && this.status < 300 ) {
+                    resolve( {
+                        url: url,
+                        item: this.response
+                    } );
+                } else {
+                    error = new Error( this.statusText || t( 'error.loadfailed', {
+                        resource: url
+                    } ) );
+                    error.status = this.status;
+                    reject( error );
+                }
             }
-            // TODO: add fail handler
         };
 
         xhr.open( 'GET', url );

@@ -1,5 +1,6 @@
 'use strict';
 
+require( './module/redirect-IE' );
 require( './module/jquery-global' );
 require( './module/promise-by-Q' );
 
@@ -30,6 +31,7 @@ _setEmergencyHandlers();
 if ( settings.offline ) {
     console.debug( 'in offline mode' );
     formCache.init( survey )
+        .then( _addBranding )
         .then( _swapTheme )
         .then( _init )
         .then( formCache.updateMaxSubmissionSize )
@@ -44,6 +46,7 @@ if ( settings.offline ) {
 } else {
     console.debug( 'in online mode' );
     connection.getFormParts( survey )
+        .then( _addBranding )
         .then( _swapTheme )
         .then( _init )
         .then( connection.getMaximumSubmissionSize )
@@ -55,7 +58,7 @@ if ( settings.offline ) {
 
 function _showErrorOrAuthenticate( error ) {
     error = ( typeof error === 'string' ) ? new Error( error ) : error;
-    console.log( 'error', error, error.stack );
+    console.error( error, error.stack );
     $loader.addClass( 'fail' );
     if ( error.status === 401 ) {
         window.location.href = '/login?return_url=' + encodeURIComponent( window.location.href );
@@ -106,6 +109,30 @@ function _setEmergencyHandlers() {
     } );
 }
 
+/**
+ * Adds/replaces branding if necessary, and unhides branding.
+ * 
+ * @param {[type]} survey [description]
+ */
+function _addBranding( survey ) {
+    var $brandImg = $( '.form-header .branding img' );
+    var attribute = ( settings.offline ) ? 'data-offline-src' : 'src';
+
+    if ( survey.branding && survey.branding.source && $brandImg.attr( 'src' ) !== survey.branding.source ) {
+        $brandImg.attr( 'src', '' );
+        $brandImg.attr( attribute, survey.branding.source );
+    }
+    $brandImg.removeClass( 'hide' );
+
+    return survey;
+}
+
+/**
+ * Swaps the theme if necessary.
+ * 
+ * @param  {[type]} survey [description]
+ * @return {[type]}        [description]
+ */
 function _swapTheme( survey ) {
     return new Promise( function( resolve, reject ) {
         if ( survey.form && survey.model ) {

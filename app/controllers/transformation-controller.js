@@ -7,6 +7,7 @@ var surveyModel = require( '../models/survey-model' );
 var cacheModel = require( '../models/cache-model' );
 var account = require( '../models/account-model' );
 var user = require( '../models/user-model' );
+var utils = require( '../lib/utils' );
 var isArray = require( 'lodash/lang/isArray' );
 var express = require( 'express' );
 var url = require( 'url' );
@@ -84,18 +85,20 @@ function getSurveyParts( req, res, next ) {
  * @return {[type]}        [description]
  */
 function getCachedSurveyHash( req, res, next ) {
-    var s;
     _getSurveyParams( req.body )
         .then( function( survey ) {
-            s = survey;
             return cacheModel.getHashes( survey );
         } )
-        .then( function( result ) {
-            _respond( res, result );
+        .then( function( survey ) {
+            delete survey.credentials;
+            res.status( 200 );
+            res.send( {
+                hash: _getCombinedHash( survey )
+            } );
             // update cache if necessary, asynchronously AFTER responding
             // this is the ONLY mechanism by which a locally browser-stored form
             // will be updated
-            _updateCache( s );
+            _updateCache( survey );
         } )
         .catch( next );
 }
@@ -124,6 +127,9 @@ function _updateCache( survey ) {
         .then( cacheModel.check )
         .then( function( upToDate ) {
             if ( !upToDate ) {
+                delete survey.formHash;
+                delete survey.mediaHash;
+                delete survey.xslHash;
                 return _getFormDirectly( survey )
                     .then( cacheModel.set );
             }
@@ -176,7 +182,7 @@ function _checkQuota( survey ) {
     var error;
 
     return surveyModel
-        .getNumber( survey.account.openRosaServer )
+        .getNumber( survey.account.linkedServer )
         .then( function( quotaUsed ) {
             if ( quotaUsed <= survey.account.quota ) {
                 return Promise.resolve( survey );
@@ -188,7 +194,6 @@ function _checkQuota( survey ) {
 }
 
 function _respond( res, survey ) {
-
     delete survey.credentials;
 
     res.status( 200 );
@@ -197,12 +202,18 @@ function _respond( res, survey ) {
         // previously this was JSON.stringified, not sure why
         model: survey.model,
         theme: survey.theme,
+        branding: survey.account.branding,
         // The hash components are converted to deal with a node_redis limitation with storing and retrieving null.
         // If a form contains no media this hash is null, which would be an empty string upon first load.
         // Subsequent cache checks will however get the string value 'null' causing the form cache to be unnecessarily refreshed
         // on the client.
-        hash: [ String( survey.formHash ), String( survey.mediaHash ), String( survey.xslHash ), String( survey.theme ) ].join( '-' )
+        hash: _getCombinedHash( survey )
     } );
+}
+
+function _getCombinedHash( survey ) {
+    var brandingHash = ( survey.account.branding && survey.account.branding.source ) ? utils.md5( survey.account.branding.source ) : '';
+    return [ String( survey.formHash ), String( survey.mediaHash ), String( survey.xslHash ), String( survey.theme ), String( brandingHash ) ].join( '-' );
 }
 
 function _getSurveyParams( params ) {
@@ -233,12 +244,13 @@ function _getSurveyParams( params ) {
         return account.check( {
                 openRosaServer: domain
             } )
-            .then( function() {
+            .then( function( survey ) {
                 // no need to check quota
                 return Promise.resolve( {
                     info: {
                         downloadUrl: params.xformUrl
-                    }
+                    },
+                    account: survey.account
                 } );
             } );
     } else {
