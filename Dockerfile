@@ -1,35 +1,40 @@
 FROM ubuntu:trusty
 
-EXPOSE 8005
-CMD ["bash", "/srv/enketo-express/setup/docker/entrypoint.bash"]
+ENV ENKETO_SRC_DIR=/srv/src/enketo-express
 
 ################
 # apt installs #
 ################
 
-WORKDIR /srv
+# Prepare to install Node.
+ADD https://deb.nodesource.com/setup_4.x /tmp/
+RUN bash /tmp/setup_4.x
+
 RUN apt-get update && \
     apt-get upgrade -y
-RUN apt-get install -y curl && \
-    curl -sL https://deb.nodesource.com/setup_0.10 | bash -
-COPY ./setup/docker/apt_packages.txt /srv/
-RUN apt-get install -y $(cat apt_packages.txt)
+COPY ./setup/docker/apt_packages.txt ${ENKETO_SRC_DIR}/setup/docker/
+WORKDIR ${ENKETO_SRC_DIR}/
+RUN apt-get install -y $(cat setup/docker/apt_packages.txt)
 # Non-interactive equivalent of `dpkg-reconfigure -plow unattended-upgrades` (see https://blog.sleeplessbeastie.eu/2015/01/02/how-to-perform-unattended-upgrades/).
 RUN cp /usr/share/unattended-upgrades/20auto-upgrades /etc/apt/apt.conf.d/20auto-upgrades
-
 
 ###############################
 # Enketo Express Installation #
 ###############################
 
 RUN npm install -g grunt-cli pm2
-# Checks out a fresh copy of the repo.
-RUN git clone https://github.com/enketo/enketo-express.git
-WORKDIR /srv/enketo-express
-RUN npm cache clean &&\
-    npm install
+COPY ./package.json ${ENKETO_SRC_DIR}/
+RUN npm install --production
+RUN npm rebuild node-sass
+
+COPY . ${ENKETO_SRC_DIR}
+ENV PATH $PATH:${KPI_SRC_DIR}/node_modules/.bin
+RUN grunt
 
 # Persist the `secrets` directory so the encryption key remains consistent.
-RUN mkdir -p /srv/enketo-express/setup/docker/secrets
-VOLUME /srv/enketo-express/setup/docker/secrets
+RUN mkdir -p ${ENKETO_SRC_DIR}/setup/docker/secrets
+VOLUME ${ENKETO_SRC_DIR}/setup/docker/secrets
 
+
+EXPOSE 8005
+CMD /bin/bash ${ENKETO_SRC_DIR}/setup/docker/entrypoint.bash

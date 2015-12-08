@@ -31,6 +31,11 @@ def get_encryption_key():
 
 
 def create_config():
+    
+    CONFIG_FILE_PATH= os.path.join(PROJECT_ROOT_PATH, 'config/config.json')
+    if os.path.isfile(CONFIG_FILE_PATH):
+        return
+    
     config= dict()
 
     offline_enabled= os.environ.get('ENKETO_OFFLINE_SURVEYS', 'True').lower() == 'true'
@@ -53,7 +58,6 @@ def create_config():
                                'password': os.environ.get('ENKETO_REDIS_CACHE_PASSWORD', None),
                               }
 
-    CONFIG_FILE_PATH= os.path.join(PROJECT_ROOT_PATH, 'config/config.json')
     with open(CONFIG_FILE_PATH, 'w') as config_file:
         config_file.write(json.dumps(config, indent=4))
 
