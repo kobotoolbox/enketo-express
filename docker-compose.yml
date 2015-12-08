@@ -7,15 +7,23 @@ app:
     - redis_cache
   env_file:
     - ./setup/docker/envfile.txt
+  environment:
+    - ENKETO_REDIS_MAIN_HOST=ec2-52-90-204-106.compute-1.amazonaws.com
+    - ENKETO_REDIS_MAIN_CACHE=ec2-52-90-204-106.compute-1.amazonaws.com
+    - ENKETO_REDIS_CACHE_PORT=6380
 
 redis_main:
   image: redis:2.6
   # Map our "main" Redis config into the container.
   volumes:
     - ./setup/redis/conf/redis-enketo-main.conf:/etc/redis/redis.conf
+  ports:
+    - "6379:6379"
 
 redis_cache:
   image: redis:2.6
   # Map our "cache" Redis config into the container.
   volumes:
     - ./setup/redis/conf/redis-enketo-cache.conf:/etc/redis/redis.conf
+  ports:
+    - "6380:6379"
