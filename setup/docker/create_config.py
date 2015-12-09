@@ -17,7 +17,10 @@ def get_encryption_key():
     encryption_key= os.environ.get('ENKETO_ENCRYPTION_KEY')
 
     # If the key wasn't in the environment, attempt to get it from disk.
-    encryption_key_file_path= os.path.join(CURRENT_DIR_PATH, 'secrets/enketo_encryption_key.txt')
+    secrets_dir_path= os.path.join(CURRENT_DIR_PATH, 'secrets/')
+    if not os.path.isdir(secrets_dir_path):
+        os.mkdir(secrets_dir_path)
+    encryption_key_file_path= os.path.join(secrets_dir_path, 'enketo_encryption_key.txt')
     if not encryption_key and os.path.isfile(os.path.join(encryption_key_file_path)):
         with open(encryption_key_file_path, 'r') as encryption_key_file:
             encryption_key= encryption_key_file.read().strip()
