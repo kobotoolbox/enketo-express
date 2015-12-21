@@ -2,6 +2,23 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+[Unreleased] 
+---------------------
+##### Added
+- Export functionality.
+
+##### Fixed
+- Under some conditions surveys/list and surveys/number return too many results.
+
+[1.21.2] - 2015-12-18
+---------------------
+##### Changed
+- Attempt to upload queue immediately after saving a final record.
+
+##### Fixed
+- If users logs out, queue cannot be submitted, no login UI shown.
+- OpenRosa authentication: a change in auth status for one user causes global appCache refresh.
+
 [1.21.1] - 2015-12-07
 ---------------------
 ##### Changed
@@ -491,12 +508,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 [1.2.0] - 2014-11-11
 -----------
-Added
+##### Added
 - External authentication support.
 
 [1.1.1] - 2014-11-08
 -----------
-Fixed
+##### Fixed
 - Instance API endpoint does not add return URL to response.
 
 [1.1.0] - 2014-11-08

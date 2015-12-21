@@ -8,6 +8,7 @@ var store = require( './store' );
 var connection = require( './connection' );
 var gui = require( './gui' );
 var settings = require( './settings' );
+var exporter = require( './exporter' );
 var t = require( './translator' );
 var $ = require( 'jquery' );
 
@@ -148,6 +149,7 @@ function uploadQueue() {
     var errorMsg;
     var successes = [];
     var fails = [];
+    var authRequired;
 
     if ( !uploadOngoing && connection.getOnlineStatus ) {
 
@@ -187,6 +189,10 @@ function uploadQueue() {
                                     } );
                             } )
                             .catch( function( result ) {
+                                // catch 401 responses (1 of them)
+                                if ( result.status === 401 ) {
+                                    authRequired = true;
+                                }
                                 // if any non HTTP error occurs, output the error.message
                                 errorMsg = result.message || gui.getErrorResponseMsg( result.status );
                                 fails.push( record.name );
@@ -195,7 +201,9 @@ function uploadQueue() {
                             .then( function() {
                                 if ( successes.length + fails.length === records.length ) {
                                     uploadOngoing = false;
-                                    if ( successes.length > 0 ) {
+                                    if ( authRequired ) {
+                                        gui.confirmLogin();
+                                    } else if ( successes.length > 0 ) {
                                         // let gui send a feedback message
                                         $( document ).trigger( 'queuesubmissionsuccess', successes );
                                     }
@@ -207,6 +215,21 @@ function uploadQueue() {
                 }, Promise.resolve() );
             } );
     }
+}
+
+function exportToZip( formTitle ) {
+
+    $exportButton.prop( 'disabled', true );
+
+    return exporter.recordsToZip( settings.enketoId, formTitle )
+        .then( function( blob ) {
+            $exportButton.prop( 'disabled', false );
+            return blob;
+        } )
+        .catch( function( error ) {
+            $exportButton.prop( 'disabled', false );
+            throw error;
+        } );
 }
 
 /**
@@ -309,6 +332,7 @@ function _updateRecordList() {
                 $recordList.empty().append( '<li class="record-list__records--none">' + t( 'record-list.norecords' ) + '</li>' );
             } else {
                 $recordList.find( '.record-list__records--none' ).remove();
+                $exportButton.prop( 'disabled', false );
             }
 
             // remove records that no longer exist
@@ -320,9 +344,6 @@ function _updateRecordList() {
                     $rec.next( '.msg' ).addBack().remove();
                 }
             } );
-
-            // TODO enable export button
-            // $exportButton.prop( 'disabled', false );
 
             records.forEach( function( record ) {
                 // if there is at least one record not marked as draft
@@ -373,5 +394,6 @@ module.exports = {
     flush: flush,
     getCounterValue: getCounterValue,
     setActive: setActive,
-    uploadQueue: uploadQueue
+    uploadQueue: uploadQueue,
+    exportToZip: exportToZip
 };

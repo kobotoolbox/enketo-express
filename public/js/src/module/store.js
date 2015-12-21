@@ -101,7 +101,7 @@ function init() {
         } )
         .then( function( s ) {
             server = s;
-            console.debug( 'WHoohoeeee, we\'ve got ourselves a da tabase! Now let\'s check if it works properly.' );
+            console.debug( 'WHoohoeeee, we\'ve got ourselves a database! Now let\'s check if it works properly.' );
         } )
         .then( _isWriteable )
         .then( _setBlobStorageEncoding )
@@ -482,6 +482,7 @@ recordStore = {
                 name: record.name,
                 xml: record.xml,
                 files: fileKeys,
+                created: new Date().getTime(),
                 updated: new Date().getTime(),
                 draft: record.draft
             } )
@@ -542,6 +543,7 @@ recordStore = {
                     name: record.name,
                     xml: record.xml,
                     files: fileKeys,
+                    created: ( result && result.created ? result.created : new Date().getTime() ),
                     updated: new Date().getTime(),
                     draft: record.draft
                 } );
