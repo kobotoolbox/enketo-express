@@ -1,29 +1,33 @@
-app:
-  build: .
+web:
+  image: teodorescuserban/kobo-base-nginx
+  links:
+    - enketo
   ports:
-    - "8005:8005"
+    - "80:80"
+    - "443:443"
+  volumes:
+    - ./setup/docker/nginx_site_http.conf:/tmp/nginx_site_http.conf
+    - ./setup/docker/nginx_site_https.conf:/tmp/nginx_site_https.conf
+    - ./setup/docker/secrets/ssl.crt:/tmp/ssl.crt
+    - ./setup/docker/secrets/ssl.key:/tmp/ssl.key
+    - ./setup/docker/setup_nginx.bash:/etc/my_init.d/setup_nginx.bash
+
+enketo:
+  build: .
   links:
     - redis_main
     - redis_cache
   env_file:
     - ./setup/docker/envfile.txt
-  environment:
-    - ENKETO_REDIS_MAIN_HOST=ec2-52-90-204-106.compute-1.amazonaws.com
-    - ENKETO_REDIS_MAIN_CACHE=ec2-52-90-204-106.compute-1.amazonaws.com
-    - ENKETO_REDIS_CACHE_PORT=6380
 
 redis_main:
   image: redis:2.6
   # Map our "main" Redis config into the container.
   volumes:
     - ./setup/redis/conf/redis-enketo-main.conf:/etc/redis/redis.conf
-  ports:
-    - "6379:6379"
 
 redis_cache:
   image: redis:2.6
   # Map our "cache" Redis config into the container.
   volumes:
     - ./setup/redis/conf/redis-enketo-cache.conf:/etc/redis/redis.conf
-  ports:
-    - "6380:6379"
