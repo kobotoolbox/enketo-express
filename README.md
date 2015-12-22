@@ -33,10 +33,10 @@ _\* sometimes `vagrant up` fails for reasons beyond our control - e.g. if extern
 #### Using Docker:
 1. Install [Docker Compose](http://docs.docker.com/compose/install/).
 2. Set Enketo Express's API key, the linked form and data server, and any additional desired configurations in the file `setup/docker/envfile.txt`.
-3. **(Optional)** For HTTPS, write your certificate and key files to `setup/docker/secrets/ssl.crt` and `setup/docker/secrets/ssl.key`. HTTP requests will be automatically redirected to `https://${HOSTNAME}/$request_uri`; `HOSTNAME` can be set by overriding it in your environment such as with `HOSTNAME=ee-staging.kobotoolbox.org docker-compose up -d` (see step 4).
+3. **(Optional)** For HTTPS, write your certificate and key files to `setup/docker/secrets/ssl.crt` and `setup/docker/secrets/ssl.key`. Make sure not to commit these to any public repository; to have Git ignore the changes to these "tracked" files do `git update-index --assume-unchanged setup/docker/secrets/ssl.*`. HTTP requests to Enketo Express will be automatically redirected to `https://${HOSTNAME}/$request_uri`; `HOSTNAME` can be set by overriding it in your environment such as with `HOSTNAME=ee-staging.kobotoolbox.org docker-compose up -d` (see step 4).
 4. Run `docker-compose up` from project folder and wait until it completes.
 
-The app should now be running on [localhost:80](http://localhost:80).
+The app should now be running on [localhost](http://localhost).
 
 ### How to install a production server
 
