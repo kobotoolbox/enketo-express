@@ -11,6 +11,7 @@ web:
     - ./setup/docker/secrets/ssl.crt:/tmp/ssl.crt
     - ./setup/docker/secrets/ssl.key:/tmp/ssl.key
     - ./setup/docker/setup_nginx.bash:/etc/my_init.d/setup_nginx.bash
+  hostname: ${HOSTNAME}
 
 enketo:
   build: .
