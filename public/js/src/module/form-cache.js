@@ -22,6 +22,7 @@ function init( survey ) {
                 return set( survey );
             }
         } )
+        .then( _transformRequest )
         .then( _setUpdateIntervals )
         .then( _setResetListener );
 }
@@ -40,6 +41,10 @@ function remove( survey ) {
     return store.survey.remove( survey.enketoId );
 }
 
+function _transformRequest( survey ) {
+    return connection.getFormPartsHash( survey, true );
+}
+
 function _setUpdateIntervals( survey ) {
     hash = survey.hash;
 
@@ -49,7 +54,7 @@ function _setUpdateIntervals( survey ) {
     // that open the form right after the XForm update.
     setTimeout( function() {
         _updateCache( survey );
-    }, 30 * 1000 );
+    }, 3 * 1000 );
     // check for form update every 20 minutes
     setInterval( function() {
         _updateCache( survey );
