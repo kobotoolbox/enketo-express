@@ -6,7 +6,7 @@ ENV ENKETO_SRC_DIR=/srv/src/enketo-express
 # apt installs #
 ################
 
-# Prepare to install Node.
+# Install Node.
 ADD https://deb.nodesource.com/setup_4.x /tmp/
 RUN bash /tmp/setup_4.x
 
@@ -22,14 +22,13 @@ RUN cp /usr/share/unattended-upgrades/20auto-upgrades /etc/apt/apt.conf.d/20auto
 # Enketo Express Installation #
 ###############################
 
-RUN npm install -g grunt-cli pm2
+RUN npm install -g grunt-cli
 COPY ./package.json ${ENKETO_SRC_DIR}/
 RUN npm install --production
 RUN npm rebuild node-sass
 
 COPY . ${ENKETO_SRC_DIR}
 ENV PATH $PATH:${KPI_SRC_DIR}/node_modules/.bin
-RUN grunt
 
 # Persist the `secrets` directory so the encryption key remains consistent.
 RUN mkdir -p ${ENKETO_SRC_DIR}/setup/docker/secrets
