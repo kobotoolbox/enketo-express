@@ -4,7 +4,8 @@
 rm -rf /etc/nginx/sites-enabled/*
 
 # Check if the SSL certificate and key have been provided.
-if [[ -s /tmp/ssl.crt ]] && [[ -s /tmp/ssl.key ]] ; then
+touch /tmp/secrets/ssl.crt /tmp/secrets/ssl.key
+if [[ -s /tmp/secrets/ssl.crt ]] && [[ -s /tmp/secrets/ssl.key ]] ; then
     # Use the HTTPS site configuration.
     cp /tmp/nginx_site_https.conf /etc/nginx/sites-enabled/
 else

@@ -8,8 +8,7 @@ web:
   volumes:
     - ./setup/docker/nginx_site_http.conf:/tmp/nginx_site_http.conf
     - ./setup/docker/nginx_site_https.conf:/tmp/nginx_site_https.conf
-    - ./setup/docker/secrets/ssl.crt:/tmp/ssl.crt
-    - ./setup/docker/secrets/ssl.key:/tmp/ssl.key
+    - ./setup/docker/secrets/:/tmp/secrets/
     - ./setup/docker/setup_nginx.bash:/etc/my_init.d/setup_nginx.bash
   hostname: ${HOSTNAME}
 
