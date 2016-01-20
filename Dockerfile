@@ -1,4 +1,4 @@
-FROM ubuntu:trusty
+FROM phusion/baseimage:latest
 
 ENV ENKETO_SRC_DIR=/srv/src/enketo-express
 
@@ -15,6 +15,10 @@ WORKDIR ${ENKETO_SRC_DIR}/
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y $(cat setup/docker/apt_packages.txt)
+
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # Non-interactive equivalent of `dpkg-reconfigure -plow unattended-upgrades` (see https://blog.sleeplessbeastie.eu/2015/01/02/how-to-perform-unattended-upgrades/).
 RUN cp /usr/share/unattended-upgrades/20auto-upgrades /etc/apt/apt.conf.d/20auto-upgrades
 
@@ -22,10 +26,9 @@ RUN cp /usr/share/unattended-upgrades/20auto-upgrades /etc/apt/apt.conf.d/20auto
 # Enketo Express Installation #
 ###############################
 
-RUN npm install -g grunt-cli
+RUN npm install -g grunt-cli pm2
 COPY ./package.json ${ENKETO_SRC_DIR}/
 RUN npm install --production
-RUN npm rebuild node-sass
 
 COPY . ${ENKETO_SRC_DIR}
 ENV PATH $PATH:${KPI_SRC_DIR}/node_modules/.bin
@@ -34,7 +37,10 @@ ENV PATH $PATH:${KPI_SRC_DIR}/node_modules/.bin
 RUN mkdir -p ${ENKETO_SRC_DIR}/setup/docker/secrets
 VOLUME ${ENKETO_SRC_DIR}/setup/docker/secrets
 
+# Prepare for execution.
+COPY ./setup/docker/setup_enketo.bash /etc/my_init.d/
+RUN mkdir -p /etc/service/enketo
+COPY ./setup/docker/run_enketo.bash /etc/service/enketo/run
+
 
 EXPOSE 8005
-CMD /bin/bash ${ENKETO_SRC_DIR}/setup/docker/entrypoint.bash
-

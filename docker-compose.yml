@@ -10,7 +10,7 @@ web:
     - ./setup/docker/nginx_site_https.conf:/tmp/nginx_site_https.conf
     - ./setup/docker/secrets/:/tmp/secrets/
     - ./setup/docker/setup_nginx.bash:/etc/my_init.d/setup_nginx.bash
-  hostname: ${HOSTNAME}
+  hostname: ${SSL_HOSTNAME}
 
 enketo:
   build: .
