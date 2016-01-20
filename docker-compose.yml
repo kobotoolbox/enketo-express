@@ -25,6 +25,7 @@ redis_main:
   # Map our "main" Redis config into the container.
   volumes:
     - ./setup/redis/conf/redis-enketo-main.conf:/etc/redis/redis.conf
+    - ./setup/docker/redis_main_data/:/data/
 
 redis_cache:
   image: redis:2.6
