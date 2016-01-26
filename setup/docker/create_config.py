@@ -47,7 +47,7 @@ def create_config():
 
     config['linked form and data server']= dict()
     config['linked form and data server']['api key']= os.environ['ENKETO_API_KEY']
-    config['linked form and data server']['server url']= os.environ.get('ENKETO_FORM_DATA_SERVER_URL', 'kobocat')
+    config['linked form and data server']['server url']= os.environ.get('ENKETO_FORM_DATA_SERVER_URL', '')
     config['linked form and data server']['encryption key']= get_encryption_key()
 
     config['redis']= dict()

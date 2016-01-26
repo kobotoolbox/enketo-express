@@ -1,5 +1,5 @@
 web:
-  image: teodorescuserban/kobo-base-nginx
+  image: kobotoolbox/base-nginx
   links:
     - enketo
   ports:
@@ -12,8 +12,9 @@ web:
     - ./setup/docker/setup_nginx.bash:/etc/my_init.d/setup_nginx.bash
   hostname: ${SSL_HOSTNAME}
 
-enketo:
-  build: .
+enketo-express:
+  image: kobotoolbox/enketo-express
+  # build: .
   links:
     - redis_main
     - redis_cache
