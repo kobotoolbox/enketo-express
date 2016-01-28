@@ -375,6 +375,11 @@ function _saveRecord( recordName, confirmed, errorMsg ) {
 function _autoSaveRecord() {
     var record;
 
+    // do not auto-save a record if the record was loaded from storage
+    if ( form.getRecordName() ) {
+        return Promise.resolve();
+    }
+
     // build the variable portions of the record object
     record = {
         'xml': form.getDataStr(),
@@ -389,7 +394,7 @@ function _autoSaveRecord() {
     };
 
     // save the record
-    records.updateAutoSavedRecord( record )
+    return records.updateAutoSavedRecord( record )
         .then( function() {
             console.log( 'autosave successful' );
         } )
@@ -471,7 +476,7 @@ function _setEventHandlers() {
                     _handleAlternativeDownloadRequest.call( this, event, zipFile );
                 } );
 
-                gui.alert( t( 'alert.export.success.msg' ) + createDownloadLink, t( 'alert.export.success.heading' ), 'info' );
+                gui.alert( t( 'alert.export.success.msg' ) + createDownloadLink, t( 'alert.export.success.heading' ), 'normal' );
             } )
             .catch( function( error ) {
                 var message = t( 'alert.export.error.msg', {

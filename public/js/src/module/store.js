@@ -128,7 +128,7 @@ function _checkSupport() {
         if ( typeof indexedDB === "object" ) {
             resolve();
         } else {
-            if ( sniffer.browser.isOnIos() ) {
+            if ( sniffer.os.isIos() ) {
                 error = new Error( t( 'store.error.iosusesafari' ) );
             } else {
                 error = new Error( t( 'store.error.notsupported' ) );
@@ -578,7 +578,8 @@ recordStore = {
         var files;
         var tasks = [];
 
-        return recordStore.get( instanceId )
+        return server.records.get( instanceId )
+            .then( _firstItemOnly )
             .then( function( record ) {
                 files = record.files || [];
                 files.forEach( function( fileKey ) {
