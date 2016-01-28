@@ -1,35 +1,42 @@
 web:
-  image: kobotoolbox/base-nginx
+  image: nginx
   links:
-    - enketo
+    - enketo_express
   ports:
     - "80:80"
     - "443:443"
   volumes:
-    - ./setup/docker/nginx_site_http.conf:/tmp/nginx_site_http.conf
-    - ./setup/docker/nginx_site_https.conf:/tmp/nginx_site_https.conf
-    - ./setup/docker/secrets/:/tmp/secrets/
-    - ./setup/docker/setup_nginx.bash:/etc/my_init.d/setup_nginx.bash
+    - ./setup/docker/nginx_site_http.conf:/tmp/nginx_site_http.conf:ro
+    - ./setup/docker/nginx_site_https.conf:/tmp/nginx_site_https.conf:ro
+    - ./setup/docker/nginx_command.bash:/tmp/nginx_command.bash:ro
+    - ./setup/docker/secrets/:/tmp/secrets/:ro
   hostname: ${SSL_HOSTNAME}
+  command: bash /tmp/nginx_command.bash
+  restart: always
 
-enketo-express:
-  image: kobotoolbox/enketo-express
+enketo_express:
+  image: kobotoolbox/enketo_express
   # build: .
   links:
     - redis_main
     - redis_cache
   env_file:
     - ./setup/docker/envfile.txt
+  volumes:
+    - ./setup/docker/secrets/:/srv/src/enketo_express/setup/docker/secrets/
+  restart: always
 
 redis_main:
   image: redis:2.6
   # Map our "main" Redis config into the container.
   volumes:
-    - ./setup/redis/conf/redis-enketo-main.conf:/etc/redis/redis.conf
+    - ./setup/redis/conf/redis-enketo-main.conf:/etc/redis/redis.conf:ro
     - ./setup/docker/redis_main_data/:/data/
+  restart: always
 
 redis_cache:
   image: redis:2.6
   # Map our "cache" Redis config into the container.
   volumes:
-    - ./setup/redis/conf/redis-enketo-cache.conf:/etc/redis/redis.conf
+    - ./setup/redis/conf/redis-enketo-cache.conf:/etc/redis/redis.conf:ro
+  restart: always

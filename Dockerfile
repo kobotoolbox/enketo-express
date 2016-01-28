@@ -1,6 +1,6 @@
 FROM phusion/baseimage:latest
 
-ENV ENKETO_SRC_DIR=/srv/src/enketo-express
+ENV ENKETO_SRC_DIR=/srv/src/enketo_express
 
 ################
 # apt installs #
@@ -14,10 +14,8 @@ COPY ./setup/docker/apt_packages.txt ${ENKETO_SRC_DIR}/setup/docker/
 WORKDIR ${ENKETO_SRC_DIR}/
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y $(cat setup/docker/apt_packages.txt)
-
-# Clean up APT when done.
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    apt-get install -y $(cat setup/docker/apt_packages.txt) && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Non-interactive equivalent of `dpkg-reconfigure -plow unattended-upgrades` (see https://blog.sleeplessbeastie.eu/2015/01/02/how-to-perform-unattended-upgrades/).
 RUN cp /usr/share/unattended-upgrades/20auto-upgrades /etc/apt/apt.conf.d/20auto-upgrades

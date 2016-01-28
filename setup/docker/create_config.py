@@ -46,7 +46,10 @@ def create_config():
         config['offline enabled']= 'True'
 
     config['linked form and data server']= dict()
-    config['linked form and data server']['api key']= os.environ['ENKETO_API_KEY']
+    try:
+        config['linked form and data server']['api key']= os.environ.get('ENKETO_API_KEY') or os.environ['ENKETO_API_TOKEN']
+    except KeyError:
+        raise EnvironmentError('Required environment variable `ENKETO_API_KEY` or `ENKETO_API_TOKEN` for config. generation not found')
     config['linked form and data server']['server url']= os.environ.get('ENKETO_FORM_DATA_SERVER_URL', '')
     config['linked form and data server']['encryption key']= get_encryption_key()
 
