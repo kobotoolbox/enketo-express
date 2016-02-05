@@ -87,9 +87,9 @@ The easiest way to start the app in development and debugging mode with liverelo
 
 ### Browser support
 
-Only the latest modern browser versions are officially supported. The exception is with iOS browsers. Largely, due to Apple's restrictions on third-party browsers, Chrome does not work properly with _offline-capable_ forms. We expect the iOS situation to improve somewhat in the future and are patiently waiting for this.
+Only the latest modern browser versions on Windows, OS X, Linux, Android and iOS are officially supported. Chrome or Firefox are the best browsers on all platforms except on iOS. On iOS there are no modern browsers due to Apple's restrictions on third party browsers, but Safari is the least bad option.
 
-**Enketo endeavors to show a helpful (multi-lingual) error message on unsupported browsers when the form is loaded to avoid serious issues. E.g. Chrome users on iOS will be recommended to switch to Safari when necessary.**
+**Enketo endeavors to show a helpful (multi-lingual) error message on unsupported browsers when the form is loaded to avoid serious issues.**
 
 
 ### Differences with [enketo/enketo-legacy](https://github.com/enketo/enketo-legacy)
@@ -136,7 +136,7 @@ _Form authentication_ is only secure when Enketo is running on **https**. To avo
 
 ### Translation
 
-The user interface was translated by: Reza Doosti, Hossein Azad, Davood Mottalee (Persian), Tomas Skripcak (Slovak, German), Robert Michael Lundin (Norwegian), Margaret Ndisha, Charles Mutisya (Swahili), Panzero Mauro (Italian), Gabriel Kreindler (Romanian), Jason Reeder, Omar Nazar, Sara Sameer, David Gessel (Arabic), Tino Kreutzer (German), Wasilis Mandratzis-Walz (German, Greek), Luis Molina (Spanish), Martijn van de Rijdt (Dutch).
+The user interface was translated by: Trần Quý Phi (Vietnamese), Reza Doosti, Hossein Azad, Davood Mottalee (Persian), Tomas Skripcak (Slovak, German), Robert Michael Lundin (Norwegian), Margaret Ndisha, Charles Mutisya (Swahili), Panzero Mauro (Italian), Gabriel Kreindler (Romanian), Jason Reeder, Omar Nazar, Sara Sameer, David Gessel (Arabic), Tino Kreutzer (German), Wasilis Mandratzis-Walz (German, Greek), Luis Molina (Spanish), Martijn van de Rijdt (Dutch).
 
 _Send a message if you'd like to contribute! We use an easy web interface provided by [Transifex](https://www.transifex.com/projects/p/enketo-express/)._
 
