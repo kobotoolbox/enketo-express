@@ -5,13 +5,13 @@ web:
   ports:
     - "80:80"
     - "443:443"
+  env_file:
+    - ./setup/docker/envfile.txt
   volumes:
-    - ./setup/docker/nginx_site_http.conf:/tmp/nginx_site_http.conf:ro
-    - ./setup/docker/nginx_site_https.conf:/tmp/nginx_site_https.conf:ro
-    - ./setup/docker/nginx_command.bash:/tmp/nginx_command.bash:ro
-    - ./setup/docker/secrets/:/tmp/secrets/:ro
+    - ./setup/docker/nginx/:/tmp/enketo_express_nginx/:ro
+    - ./setup/docker/secrets/:/tmp/enketo_express_secrets/:ro
   hostname: ${SSL_HOSTNAME}
-  command: bash /tmp/nginx_command.bash
+  command: bash /tmp/enketo_express_nginx/nginx_command.bash
   restart: always
 
 enketo_express:
