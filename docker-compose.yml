@@ -1,4 +1,4 @@
-web:
+nginx:
   image: nginx
   links:
     - enketo_express
