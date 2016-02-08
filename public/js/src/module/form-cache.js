@@ -22,7 +22,6 @@ function init( survey ) {
                 return set( survey );
             }
         } )
-        .then( _transformRequest )
         .then( _setUpdateIntervals )
         .then( _setResetListener );
 }
@@ -39,10 +38,6 @@ function set( survey ) {
 
 function remove( survey ) {
     return store.survey.remove( survey.enketoId );
-}
-
-function _transformRequest( survey ) {
-    return connection.getFormPartsHash( survey, true );
 }
 
 function _setUpdateIntervals( survey ) {

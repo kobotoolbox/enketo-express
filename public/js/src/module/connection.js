@@ -485,7 +485,7 @@ function getManifestVersion( manifestUrl ) {
     } );
 }
 
-function getFormPartsHash( props, usePropsAsResolveArg ) {
+function getFormPartsHash( props ) {
     var error;
 
     return new Promise( function( resolve, reject ) {
@@ -496,22 +496,12 @@ function getFormPartsHash( props, usePropsAsResolveArg ) {
                 }
             } )
             .done( function( data ) {
-                var resolveArg = data.hash;
-                if ( usePropsAsResolveArg === true )
-                    resolveArg = props;
-                resolve( resolveArg );
+                resolve( data.hash );
             } )
             .fail( function( jqXHR, textStatus, errorMsg ) {
-                // resolve if `usePropsAsResolveArg` is true - assumption is app is offline
-                // hence transformation cannot be done. `usePropsAsResolveArg` is only passed
-                // in form-cache.js by _transformRequest function.
-                if ( usePropsAsResolveArg === true ) {
-                    resolve( props );
-                } else {
-                    error = new Error( errorMsg );
-                    error.status = jqXHR.status;
-                    reject( error );
-                }
+                error = new Error( errorMsg );
+                error.status = jqXHR.status;
+                reject( error );
             } );
     } );
 }
