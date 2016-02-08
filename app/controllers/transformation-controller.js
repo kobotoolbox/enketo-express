@@ -134,7 +134,7 @@ function _updateCache( survey ) {
                 return _getFormDirectly( survey )
                     .then( cacheModel.set );
             }
-            return survey
+            return survey;
         } )
         .catch( function( error ) {
             if ( error.status === 401 || error.status === 404 ) {
