@@ -39,6 +39,7 @@ describe( 'Manifest Model', function() {
             expect( result ).to.contain( '/css/theme-kobo.css' );
             expect( result ).to.contain( '/css/theme-formhub.css' );
             expect( result ).to.contain( '/css/theme-grid.css' );
+            expect( result ).to.contain( '/css/theme-theme.css' );
             expect( result ).to.contain( '/fonts/fontawesome-webfont.woff' );
             expect( result ).to.contain( '/fonts/fontawesome-webfont.svg' );
             expect( result ).to.contain( '/fonts/OpenSans-Regular-webfont.woff' );
@@ -49,6 +50,26 @@ describe( 'Manifest Model', function() {
             expect( result ).to.contain( '/fonts/enketo-icons-v2.woff' );
             expect( result ).to.contain( '/fonts/enketo-icons-v2.ttf' );
             expect( result ).to.contain( '/fonts/enketo-icons-v2.svg' );
+            expect( result ).to.contain( '/material-design-icons/Material-Design-Icons.svg' );
+            expect( result ).to.contain( '/material-design-icons/Material-Design-Icons.ttf' );
+            expect( result ).to.contain( '/material-design-icons/Material-Design-Icons.eot' );
+            expect( result ).to.contain( '/material-design-icons/Material-Design-Icons.woff' );
+            expect( result ).to.contain( '/material-design-icons/Material-Design-Icons.woff2' );
+            expect( result ).to.contain( '/roboto/Roboto-Bold.ttf' );
+            expect( result ).to.contain( '/roboto/Roboto-Light.ttf' );
+            expect( result ).to.contain( '/roboto/Roboto-Medium.ttf' );
+            expect( result ).to.contain( '/roboto/Roboto-Regular.ttf' );
+            expect( result ).to.contain( '/roboto/Roboto-Thin.ttf' );
+            expect( result ).to.contain( '/roboto/Roboto-Bold.woff' );
+            expect( result ).to.contain( '/roboto/Roboto-Light.woff' );
+            expect( result ).to.contain( '/roboto/Roboto-Medium.woff' );
+            expect( result ).to.contain( '/roboto/Roboto-Regular.woff' );
+            expect( result ).to.contain( '/roboto/Roboto-Thin.woff' );
+            expect( result ).to.contain( '/roboto/Roboto-Bold.woff2' );
+            expect( result ).to.contain( '/roboto/Roboto-Light.woff2' );
+            expect( result ).to.contain( '/roboto/Roboto-Medium.woff2' );
+            expect( result ).to.contain( '/roboto/Roboto-Regular.woff2' );
+            expect( result ).to.contain( '/roboto/Roboto-Thin.woff2' );
             expect( result ).to.contain( '/js/src/module/gui.js' );
         } );
 
