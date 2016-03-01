@@ -5,7 +5,7 @@
 'use strict';
 
 var settings = require( './settings' );
-var t = require( './translator' );
+var t = require( './translator' ).t;
 var utils = require( './utils' );
 var $ = require( 'jquery' );
 
@@ -15,10 +15,8 @@ var CONNECTION_URL = '/connection';
 var TRANSFORM_URL = '/transform/xform' + location.search;
 var TRANSFORM_HASH_URL = '/transform/xform/hash';
 var EXPORT_URL = '/export/get-url';
-var SUBMISSION_URL = ( settings.enketoId ) ? '/submission/' + settings.enketoIdPrefix + settings.enketoId + location.search : null;
 var INSTANCE_URL = ( settings.enketoId ) ? '/submission/' + settings.enketoIdPrefix + settings.enketoId : null;
 var MAX_SIZE_URL = ( settings.enketoId ) ? '/submission/max-size/' + settings.enketoIdPrefix + settings.enketoId : null;
-var DEFAULT_MAX_SIZE = 5 * 1024 * 1024;
 var ABSOLUTE_MAX_SIZE = 100 * 1024 * 1024;
 
 /**
@@ -97,7 +95,7 @@ function uploadRecord( record ) {
             } );
         }, Promise.resolve() )
         .then( function( results ) {
-            console.debug( 'results of all batches submitted', results );
+            console.log( 'results of all batches submitted', results );
             return results[ 0 ];
         } );
 }
@@ -132,7 +130,10 @@ function getDownloadUrl( zipFile ) {
  */
 function _uploadBatch( recordBatch ) {
     return new Promise( function( resolve, reject ) {
-        $.ajax( SUBMISSION_URL, {
+        // submission URL is dynamic
+        var submissionUrl = ( settings.enketoId ) ? '/submission/' + settings.enketoIdPrefix + settings.enketoId +
+            utils.getQueryString( settings.submissionParameter ) : null;
+        $.ajax( submissionUrl, {
                 type: 'POST',
                 data: recordBatch.formData,
                 cache: false,
@@ -223,7 +224,7 @@ function _prepareFormDataArray( record ) {
         batches = _divideIntoBatches( sizes, maxSize );
     }
 
-    console.debug( 'splitting record into ' + batches.length + ' batches to reduce submission size ', batches );
+    console.log( 'splitting record into ' + batches.length + ' batches to reduce submission size ', batches );
 
     batches.forEach( function( batch ) {
         var batchPrepped;
@@ -308,7 +309,8 @@ function getMaximumSubmissionSize() {
     var maxSubmissionSize;
 
     return new Promise( function( resolve ) {
-        if ( MAX_SIZE_URL ) {
+
+        if ( MAX_SIZE_URL && settings.type !== 'preview' && settings.type !== 'app' ) {
             $.ajax( MAX_SIZE_URL, {
                     type: 'GET',
                     timeout: 5 * 1000,
@@ -319,15 +321,16 @@ function getMaximumSubmissionSize() {
                         maxSubmissionSize = ( Number( response.maxSize ) > ABSOLUTE_MAX_SIZE ) ? ABSOLUTE_MAX_SIZE : Number( response.maxSize );
                         resolve( maxSubmissionSize );
                     } else {
+                        console.error( 'Error retrieving maximum submission size. Unexpected response: ', response );
                         // Note that in /previews the MAX_SIZE_URL is null, which will immediately call this handler
-                        resolve( DEFAULT_MAX_SIZE );
+                        resolve( null );
                     }
                 } )
                 .fail( function() {
-                    resolve( DEFAULT_MAX_SIZE );
+                    resolve( null );
                 } );
         } else {
-            resolve( DEFAULT_MAX_SIZE );
+            resolve( null );
         }
     } );
 }

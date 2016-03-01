@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function( grunt ) {
-    var JS_INCLUDE = [ '**/*.js', '!node_modules/**', '!test/**/*.spec.js', '!public/lib/**/*.js', '!public/js/*-bundle.js', '!public/js/*-bundle.min.js' ];
+    var JS_INCLUDE = [ '**/*.js', '!node_modules/**', '!test/**/*.spec.js', '!public/js/*-bundle.js', '!public/js/*-bundle.min.js' ];
     var pkg = grunt.file.readJSON( 'package.json' );
 
     require( 'time-grunt' )( grunt );
@@ -19,16 +19,9 @@ module.exports = function( grunt ) {
         nodemon: {
             dev: {
                 script: 'app.js',
-                watch: JS_INCLUDE,
                 options: {
+                    watch: [ 'app', 'config' ],
                     //nodeArgs: [ '--debug' ],
-                    callback: function( nodemon ) {
-                        nodemon.on( 'restart', function() {
-                            setTimeout( function() {
-                                require( 'fs' ).writeFileSync( '.rebooted', 'rebooted' );
-                            }, 1000 );
-                        } );
-                    },
                     env: {
                         NODE_ENV: 'development',
                         DEBUG: '*, -express:*, -send, -compression, -body-parser:*'
@@ -37,6 +30,9 @@ module.exports = function( grunt ) {
             }
         },
         sass: {
+            options: {
+                sourceMap: false
+            },
             compile: {
                 cwd: 'app/views/styles',
                 dest: 'public/css',
@@ -49,11 +45,22 @@ module.exports = function( grunt ) {
             }
         },
         watch: {
+            config: {
+                files: [ 'config/*.json' ],
+                tasks: [ 'client-config-file:create' ]
+            },
             sass: {
-                files: [ '.rebooted', 'config/config.json', 'app/views/styles/**/*.scss', 'app/views/**/*.jade' ],
+                files: [ 'app/views/styles/**/*.scss' ],
                 tasks: [ 'sass' ],
                 options: {
-                    spawn: true,
+                    spawn: false,
+                    livereload: true
+                }
+            },
+            jade: {
+                files: [ 'app/views/**/*.jade' ],
+                options: {
+                    spawn: false,
                     livereload: true
                 }
             },
@@ -62,10 +69,10 @@ module.exports = function( grunt ) {
                 tasks: [ 'shell:translation' ]
             },
             js: {
-                files: JS_INCLUDE,
+                files: [ 'public/js/src/**/*.js' ],
                 tasks: [ 'compile-dev' ],
                 options: {
-                    spawn: true,
+                    spawn: false,
                     livereload: true
                 }
             }
@@ -119,11 +126,11 @@ module.exports = function( grunt ) {
                 reporters: [ 'dots' ]
             },
             headless: {
-                configFile: 'test/client/config/headless-karma.conf.js',
+                configFile: 'test/client/config/karma.conf.js',
                 browsers: [ 'PhantomJS' ]
             },
             browsers: {
-                configFile: 'test/client/config/browser-karma.conf.js',
+                configFile: 'test/client/config/karma.conf.js',
                 browsers: [ 'Chrome', 'ChromeCanary', 'Firefox', 'Opera' /*,'Safari'*/ ],
             }
         },
@@ -186,9 +193,9 @@ module.exports = function( grunt ) {
     } );
 
     grunt.registerTask( 'default', [ 'sass', 'compile', 'uglify' ] );
-    grunt.registerTask( 'compile', [ 'client-config-file:create', 'browserify:production', 'client-config-file:remove' ] );
-    grunt.registerTask( 'compile-dev', [ 'client-config-file:create', 'browserify:development', 'client-config-file:remove' ] );
+    grunt.registerTask( 'compile', [ 'client-config-file:create', 'browserify:production' ] );
+    grunt.registerTask( 'compile-dev', [ 'client-config-file:create', 'browserify:development' ] );
     grunt.registerTask( 'test', [ 'env:test', 'compile', 'sass', 'mochaTest:all', 'karma:headless', 'jsbeautifier:test', 'jshint' ] );
-    grunt.registerTask( 'test-browser', [ 'env:test', 'sass', 'client-config-file:create', 'karma:browsers', 'client-config-file:remove' ] );
+    grunt.registerTask( 'test-browser', [ 'env:test', 'sass', 'client-config-file:create', 'karma:browsers' ] );
     grunt.registerTask( 'develop', [ 'env:develop', 'compile-dev', 'concurrent:develop' ] );
 };

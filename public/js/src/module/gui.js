@@ -7,7 +7,7 @@
 var support = require( 'enketo-core/src/js/support' );
 var settings = require( './settings' );
 var printForm = require( 'enketo-core/src/js/print' );
-var t = require( './translator' );
+var t = require( './translator' ).t;
 var sniffer = require( './sniffer' );
 var dialog = require( './vex.dialog.custom' );
 var $ = require( 'jquery' );
@@ -36,10 +36,7 @@ function init() {
     if ( typeof window.console.debug === 'undefined' ) {
         console.debug = console.log;
     }
-    if ( !settings.debug ) {
-        window.console.log = function() {};
-        window.console.debug = function() {};
-    }
+
     // override feature detection (for development purposes)
     if ( settings.touch ) {
         support.touch = true;
@@ -99,7 +96,6 @@ function setEventHandlers() {
     } );
 
     $( '.side-slider__app-version' ).on( 'click', function() {
-        console.debug( 'toggling' );
         $( '.side-slider__advanced' ).toggleClass( 'hide' );
     } );
 }
@@ -350,7 +346,6 @@ function alertHomeScreenGuidance() {
 function _getHomeScreenGuidance() {
     var imageClass1;
     var imageClass2;
-    var guidanceKey;
     var browser = sniffer.browser;
     var os = sniffer.os;
 

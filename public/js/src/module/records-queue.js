@@ -9,7 +9,7 @@ var connection = require( './connection' );
 var gui = require( './gui' );
 var settings = require( './settings' );
 var exporter = require( './exporter' );
-var t = require( './translator' );
+var t = require( './translator' ).t;
 var $ = require( 'jquery' );
 
 var $exportButton;
@@ -52,8 +52,10 @@ function get( instanceId ) {
 function set( record ) {
     return getAutoSavedRecord()
         .then( function( autoSavedRecord ) {
-            // add files from autoSavedRecord
-            record.files = autoSavedRecord.files;
+            // Add files from autoSavedRecord
+            if ( autoSavedRecord ) {
+                record.files = autoSavedRecord.files;
+            }
             return store.record.set( record );
         } )
         .then( _updateRecordList );

@@ -2,8 +2,48 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-[Unreleased]
+[Unreleased] 
 ----------------------
+##### Changed
+- More modest font size for bold text, especially in Grid theme.
+
+##### Fixed
+- Options in select minimal are underlined.
+- Group labels in RTL languages are left-aligned.
+
+[1.24.0] - 2016-02-23
+----------------------
+##### Added 
+- Submission parameter now passed in offline-capable views too.
+- Full-featured iframe-friendly offline-capable webform views.
+
+##### Changed
+- Webform URL format for iframe-friendly views (**WARNING: Always use API to get webform URLs to avoid regressions for your app.**)
+- Different loader image, and now displayed in main brand color.
+
+##### Removed
+- Special client-side debugging mode. It is now always outputting log messages to the console.
+
+##### Fixed
+- Submit and Save-as-draft fail in offline-capable views if no values were changed.
+- Submit and Save-as-draft buttons have incorrect font.
+
+[1.23.2] - 2016-02-10
+----------------------
+##### Changed
+- Form section headers are now left-aligned again.
+
+##### Fixed
+- In pages mode, adding a repeat to the current page scrolls to top of page.
+- Constraint is evaluated twice when form value is changed (performance).
+- Deleted default values re-appear when a record is loaded.
+- Form scrolls to first question upon load.
+
+[1.23.1] - 2016-02-09
+----------------------
+##### Changed
+- Make form updates propagate much faster in offline-capable views.
+
 ##### Fixed
 - Min() and max() return undefined for empty values.
 - Parallel batch uploads may cause lost data in ODK Aggregate.

@@ -10,7 +10,8 @@ var controller = require( './module/controller-webform' );
 var settings = require( './module/settings' );
 var connection = require( './module/connection' );
 var FormModel = require( 'enketo-core/src/js/Form-model' );
-var t = require( './module/translator' );
+var translator = require( './module/translator' );
+var t = translator.t;
 var store = require( './module/store' );
 var utils = require( './module/utils' );
 var formCache = require( './module/form-cache' );
@@ -29,31 +30,39 @@ var survey = {
 _setEmergencyHandlers();
 
 if ( settings.offline ) {
-    console.debug( 'in offline mode' );
-    formCache.init( survey )
+    console.log( 'App in offline-capable mode.' );
+    translator.init( survey )
+        .then( formCache.init )
         .then( _addBranding )
         .then( _swapTheme )
         .then( _init )
         .then( formCache.updateMaxSubmissionSize )
         .then( formCache.updateMedia )
         .then( function( s ) {
-            settings.maxSize = s.maxSize;
+            _updateMaxSizeSetting( s.maxSize );
             _setFormCacheEventHandlers();
             _setAppCacheEventHandlers();
             appCache.init();
         } )
         .catch( _showErrorOrAuthenticate );
 } else {
-    console.debug( 'in online mode' );
-    connection.getFormParts( survey )
+    console.log( 'App in online-only mode.' );
+    translator.init( survey )
+        .then( connection.getFormParts )
+        .then( translator.init )
         .then( _addBranding )
         .then( _swapTheme )
         .then( _init )
         .then( connection.getMaximumSubmissionSize )
-        .then( function( maxSize ) {
-            settings.maxSize = maxSize;
-        } )
+        .then( _updateMaxSizeSetting )
         .catch( _showErrorOrAuthenticate );
+}
+
+function _updateMaxSizeSetting( maxSize ) {
+    if ( maxSize ) {
+        // overwrite default max size
+        settings.maxSize = maxSize;
+    }
 }
 
 function _showErrorOrAuthenticate( error ) {
@@ -178,6 +187,7 @@ function _init( formParts ) {
         if ( formParts && formParts.form && formParts.model ) {
             $loader.replaceWith( formParts.form );
             $form = $( 'form.or:eq(0)' );
+            translator.localize( $form.get( 0 ) );
             $( document ).ready( function() {
                 // TODO pass $form as first parameter?
                 // controller.init is asynchronous

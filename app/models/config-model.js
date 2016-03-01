@@ -2,7 +2,7 @@
 
 var config = require( '../../config/default-config' );
 var localConfig = require( '../../config/config' );
-var merge = require( 'lodash/object/merge' );
+var merge = require( 'lodash/merge' );
 var path = require( 'path' );
 var fs = require( 'fs' );
 var themePath = path.join( __dirname, '../../public/css' );
@@ -57,7 +57,10 @@ module.exports = {
         modernBrowsersURL: 'modern-browsers',
         supportEmail: config.support.email,
         themesSupported: config[ 'themes supported' ],
-        languagesSupported: config[ 'languages supported' ]
+        languagesSupported: config[ 'languages supported' ],
+        submissionParameter: {
+            name: config[ 'query parameter to pass to submission' ]
+        }
     },
     getThemesSupported: getThemesSupported
 };

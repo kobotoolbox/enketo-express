@@ -5,8 +5,10 @@
 'use strict';
 
 var store = require( './store' );
+var settings = require( './settings' );
 var connection = require( './connection' );
 var $ = require( 'jquery' );
+var assign = require( 'lodash/assign' );
 
 var hash;
 
@@ -15,6 +17,8 @@ function init( survey ) {
         .then( function() {
             return get( survey );
         } )
+        .then( _removeQueryString )
+        .then( _processDynamicData )
         .then( function( result ) {
             if ( result ) {
                 return result;
@@ -40,6 +44,68 @@ function remove( survey ) {
     return store.survey.remove( survey.enketoId );
 }
 
+function _removeQueryString( survey ) {
+    var bareUrl = window.location.pathname + window.location.hash;
+
+    history.replaceState( null, '', bareUrl );
+
+    return survey;
+}
+
+function _processDynamicData( survey ) {
+    // TODO: In the future this method could perhaps be used to also store
+    // dynamic defaults. However, the issue would be to figure out how to clear
+    // those defaults.
+    if ( !survey ) {
+        return survey;
+    }
+    return store.dynamicData.get( survey.enketoId )
+        .then( function( data ) {
+            var newData = {
+                enketoId: survey.enketoId
+            };
+            assign( newData, data );
+            // Carefully compare settings data with stored data to determine what to update.
+
+            // submissionParameter
+            if ( settings.submissionParameter.name ) {
+                if ( settings.submissionParameter.value ) {
+                    // use the settings value
+                    newData.submissionParameter = settings.submissionParameter;
+                } else if ( settings.submissionParameter.value === '' ) {
+                    // delete value
+                    delete newData.submissionParameter;
+                } else if ( data && data.submissionParameter && data.submissionParameter.value ) {
+                    // use the stored value
+                    settings.submissionParameter.value = data.submissionParameter.value;
+                }
+            } else {
+                delete newData.submissionParameter;
+            }
+
+            // parentWindowOrigin
+            if ( typeof settings.parentWindowOrigin !== 'undefined' ) {
+                if ( settings.parentWindowOrigin ) {
+                    // use the settings value
+                    newData.parentWindowOrigin = settings.parentWindowOrigin;
+                } else if ( settings.parentWindowOrigin === '' ) {
+                    // delete value
+                    delete newData.parentWindowOrigin;
+                } else if ( data && data.parentWindowOrigin ) {
+                    // use the stored value
+                    settings.parentWindowOrigin = data.parentWindowOrigin;
+                }
+            } else {
+                delete newData.parentWindowOrigin;
+            }
+
+            return store.dynamicData.update( newData );
+        } )
+        .then( function() {
+            return survey;
+        } );
+}
+
 function _setUpdateIntervals( survey ) {
     hash = survey.hash;
 
@@ -49,7 +115,7 @@ function _setUpdateIntervals( survey ) {
     // that open the form right after the XForm update.
     setTimeout( function() {
         _updateCache( survey );
-    }, 30 * 1000 );
+    }, 3 * 1000 );
     // check for form update every 20 minutes
     setInterval( function() {
         _updateCache( survey );
@@ -97,7 +163,7 @@ function updateMaxSubmissionSize( survey ) {
         return connection.getMaximumSubmissionSize()
             .then( function( maxSize ) {
                 survey.maxSize = maxSize;
-                return survey;
+                return store.survey.update( survey );
             } );
     } else {
         return Promise.resolve( survey );
@@ -105,7 +171,7 @@ function updateMaxSubmissionSize( survey ) {
 }
 
 /**
- * Loads survey resources either from the store or via HTTP (and stores them)
+ * Loads survey resources either from the store or via HTTP (and stores them).
  *
  * @param  {[type]} survey [description]
  * @return {Promise}        [description]
@@ -221,14 +287,14 @@ function _getElementsGroupedBySrc( $form ) {
 
 function _updateCache( survey ) {
 
-    console.debug( 'checking for survey update' );
+    console.log( 'Checking for survey update...' );
 
     connection.getFormPartsHash( survey )
         .then( function( version ) {
             if ( hash === version ) {
-                console.debug( 'Cached survey is up to date!', hash );
+                console.log( 'Cached survey is up to date!', hash );
             } else {
-                console.debug( 'Cached survey is outdated! old:', hash, 'new:', version );
+                console.log( 'Cached survey is outdated! old:', hash, 'new:', version );
                 return connection.getFormParts( survey )
                     .then( function( formParts ) {
                         // media will be updated next time the form is loaded if resources is undefined
@@ -240,7 +306,7 @@ function _updateCache( survey ) {
                     .then( function( result ) {
                         // set the hash so that subsequent update checks won't redownload the form
                         hash = result.hash;
-                        console.debug( 'Survey is now updated in the store. Need to refresh.' );
+                        console.log( 'Survey is now updated in the store. Need to refresh.' );
                         $( document ).trigger( 'formupdated' );
                     } );
             }
