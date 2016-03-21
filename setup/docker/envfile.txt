@@ -1,5 +1,5 @@
-# Necessary variable.
-ENKETO_API_KEY=
+# Required, if not specified in `config/config.json`.
+#ENKETO_API_KEY=
 
 # Optional `config.json` variables (and their default values).
 #ENKETO_LINKED_SERVER_URL=
