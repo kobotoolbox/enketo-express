@@ -10,11 +10,11 @@ ENV ENKETO_SRC_DIR=/srv/src/enketo_express
 ADD https://deb.nodesource.com/setup_4.x /tmp/
 RUN bash /tmp/setup_4.x
 
-COPY ./setup/docker/apt_packages.txt ${ENKETO_SRC_DIR}/setup/docker/
+COPY ./setup/docker/apt_requirements.txt ${ENKETO_SRC_DIR}/setup/docker/
 WORKDIR ${ENKETO_SRC_DIR}/
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y $(cat setup/docker/apt_packages.txt) && \
+    apt-get install -y $(cat setup/docker/apt_requirements.txt) && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Non-interactive equivalent of `dpkg-reconfigure -plow unattended-upgrades` (see https://blog.sleeplessbeastie.eu/2015/01/02/how-to-perform-unattended-upgrades/).
