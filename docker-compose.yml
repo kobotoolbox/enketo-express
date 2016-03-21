@@ -10,6 +10,7 @@ nginx:
   volumes:
     - ./setup/docker/nginx/:/tmp/enketo_express_nginx/:ro
     - ./setup/docker/secrets/:/tmp/enketo_express_secrets/:ro
+    - ./config/:/srv/src/enketo_express/config/
   hostname: ${SSL_HOSTNAME}
   command: bash /tmp/enketo_express_nginx/nginx_command.bash
   restart: always
@@ -23,6 +24,7 @@ enketo_express:
   env_file:
     - ./setup/docker/envfile.txt
   volumes:
+    - ./config/:/srv/src/enketo_express/config
     - ./setup/docker/secrets/:/srv/src/enketo_express/setup/docker/secrets/
   restart: always
 

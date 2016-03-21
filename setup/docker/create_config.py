@@ -5,10 +5,6 @@ import os
 
 CURRENT_DIR_PATH= os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT_PATH= os.path.abspath(os.path.join(CURRENT_DIR_PATH, '../..'))
-print CURRENT_DIR_PATH
-print os.path.abspath(os.path.join(PROJECT_ROOT_PATH, 'setup/docker'))
-assert CURRENT_DIR_PATH == os.path.abspath(os.path.join(PROJECT_ROOT_PATH, 'setup/docker'))
-
 
 def get_encryption_key():
     '''Automate the inconvenient task of generating and maintaining a consistent 
@@ -34,36 +30,42 @@ def get_encryption_key():
 
 
 def create_config():
-    
+
     CONFIG_FILE_PATH= os.path.join(PROJECT_ROOT_PATH, 'config/config.json')
-    if os.path.isfile(CONFIG_FILE_PATH):
-        return
+    if not os.path.isfile(CONFIG_FILE_PATH):
+        # raise EnvironmentError('No Enketo Express configuration found at `{}`.'.format(CONFIG_FILE_PATH))
+        config= dict()
+    else:
+        with open(CONFIG_FILE_PATH, 'r') as config_file:
+            config= json.loads(config_file.read())
+
+    # Ensure an API key was set.
+    config.setdefault('linked form and data server', dict()).setdefault('api key', os.environ.get('ENKETO_API_KEY'))
+    if not config['linked form and data server']['api key']:
+        raise EnvironmentError('An API key for Enketo Express is required.')
+
+    # Retrieve/generate the encryption key if none was set.
+    config['linked form and data server'].setdefault('encryption key', get_encryption_key())
     
-    config= dict()
+    # Other config settings that can be taken from the environment.
+    config['linked form and data server'].setdefault('server url', os.environ.get('ENKETO_LINKED_SERVER_URL', ''))
+    config['linked form and data server'].setdefault('authentication', dict()).\
+            setdefault('allow insecure transport', 
+                os.environ.get('ENKETO_ALLOW_INSECURE_TRANSPORT', 'False').lower()=='true')
+    config.setdefault('base path', os.environ.get('ENKETO_BASE_PATH', ''))
+    config.setdefault('support', dict()).\
+            setdefault('email', os.environ.get('ENKETO_SUPPORT_EMAIL', ''))
+    config.setdefault('google', dict()).setdefault('analytics', dict()).\
+            setdefault('ua', os.environ.get('ENKETO_GOOGLE_ANALYTICS_UA', ''))
+    config['google']['analytics'].\
+            setdefault('domain', os.environ.get('ENKETO_GOOGLE_ANALYTICS_DOMAIN', ''))
+    config['google'].\
+            setdefault('api key', os.environ.get('ENKETO_GOOGLE_API_KEY', ''))
+    config.setdefault('redis', dict()).setdefault('main', dict()).setdefault('host', 'redis_main')
+    config['redis'].setdefault('cache', dict()).setdefault('host', 'redis_cache')
+    config['redis']['cache'].setdefault('port', '6379')
 
-    offline_enabled= os.environ.get('ENKETO_OFFLINE_SURVEYS', 'True').lower() == 'true'
-    if offline_enabled:
-        config['offline enabled']= 'True'
-
-    config['linked form and data server']= dict()
-    try:
-        config['linked form and data server']['api key']= os.environ.get('ENKETO_API_KEY') or os.environ['ENKETO_API_TOKEN']
-    except KeyError:
-        raise EnvironmentError('Required environment variable `ENKETO_API_KEY` or `ENKETO_API_TOKEN` for config. generation not found')
-    config['linked form and data server']['server url']= os.environ.get('ENKETO_FORM_DATA_SERVER_URL', '')
-    config['linked form and data server']['encryption key']= get_encryption_key()
-
-    config['redis']= dict()
-    config['redis']['main']= {'host': os.environ.get('ENKETO_REDIS_MAIN_HOST', 'redis_main'), 
-                              'port': os.environ.get('ENKETO_REDIS_MAIN_PORT', '6379'),
-                              'password': os.environ.get('ENKETO_REDIS_MAIN_PASSWORD', None),
-                             }
-
-    config['redis']['cache']= {'host': os.environ.get('ENKETO_REDIS_CACHE_HOST', 'redis_cache'),
-                               'port': os.environ.get('ENKETO_REDIS_CACHE_PORT', '6379'),
-                               'password': os.environ.get('ENKETO_REDIS_CACHE_PASSWORD', None),
-                              }
-
+    # Write the config file.
     with open(CONFIG_FILE_PATH, 'w') as config_file:
         config_file.write(json.dumps(config, indent=4))
 
