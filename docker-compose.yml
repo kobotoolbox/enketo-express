@@ -11,7 +11,6 @@ nginx:
     - ./setup/docker/nginx/:/tmp/enketo_express_nginx/:ro
     - ./setup/docker/secrets/:/tmp/enketo_express_secrets/:ro
     - ./config/:/srv/src/enketo_express/config/
-  hostname: ${SSL_HOSTNAME}
   command: bash /tmp/enketo_express_nginx/nginx_command.bash
   restart: always
 
