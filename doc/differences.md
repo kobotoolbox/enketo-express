@@ -25,14 +25,15 @@
 * :white_check_mark: Enketo Express has support for the "big-image" XForm feature
 
 #### Developer Features
-* :white_check_mark: Enketo Express has an improved API (v2)
+* :white_check_mark: Enketo Express has an [improved API (v2)](https://apidocs.enketo.org/v2/)
 * :white_check_mark: Enketo Express allows overriding a form-defined theme via the API (v2) 
 * :white_check_mark: Enketo Express has the ability to override default form values on launch through the API (v2)
-* :white_check_mark: Enketo Express has a more advanced iframeable webform view that can communicate back to the parent window, enabled through the API (v2)
+* :white_check_mark: Enketo Express has a more advanced iframeable webform view that can [communicate back to the parent window](./iframe-postmessage.md), enabled through the API (v2)
 * :white_check_mark: Enketo Express has [external authentication](../README.md#authentication) support 
 * :x: Enketo Express has missing API endpoints and corresponding views: all endpoints containing "/single" (single submission views)
 * :white_check_mark: Enketo Express is 100% JavaScript
 * :white_check_mark: Enketo Express can be hosted on a local webserver
+* :white_check_mark: Enketo Express can be configured with a basepath, allowing it to run on the same domain as a form/data server
 
 #### Other
 * :white_check_mark: Enketo Express is much easier to install

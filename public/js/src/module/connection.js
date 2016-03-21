@@ -10,13 +10,14 @@ var utils = require( './utils' );
 var $ = require( 'jquery' );
 
 var currentOnlineStatus = null;
-var CONNECTION_URL = '/connection';
+var CONNECTION_URL = settings.basePath + '/connection';
 // location.search is added to pass the lang= parameter, in case this is used to override browser/system locale
-var TRANSFORM_URL = '/transform/xform' + location.search;
-var TRANSFORM_HASH_URL = '/transform/xform/hash';
-var EXPORT_URL = '/export/get-url';
-var INSTANCE_URL = ( settings.enketoId ) ? '/submission/' + settings.enketoIdPrefix + settings.enketoId : null;
-var MAX_SIZE_URL = ( settings.enketoId ) ? '/submission/max-size/' + settings.enketoIdPrefix + settings.enketoId : null;
+var TRANSFORM_URL = settings.basePath + '/transform/xform' + location.search;
+var TRANSFORM_HASH_URL = settings.basePath + '/transform/xform/hash';
+var EXPORT_URL = settings.basePath + '/export/get-url';
+var SUBMISSION_URL = ( settings.enketoId ) ? settings.basePath + '/submission/' + settings.enketoIdPrefix + settings.enketoId + location.search : null;
+var INSTANCE_URL = ( settings.enketoId ) ? settings.basePath + '/submission/' + settings.enketoIdPrefix + settings.enketoId : null;
+var MAX_SIZE_URL = ( settings.enketoId ) ? settings.basePath + '/submission/max-size/' + settings.enketoIdPrefix + settings.enketoId : null;
 var ABSOLUTE_MAX_SIZE = 100 * 1024 * 1024;
 
 /**
@@ -240,7 +241,8 @@ function _prepareFormDataArray( record ) {
 
         // add any media files to the batch
         batch.forEach( function( fileIndex ) {
-            batchPrepped.formData.append( submissionFiles[ fileIndex ].nodeName, submissionFiles[ fileIndex ].file, submissionFiles[ fileIndex ].file.name );
+            // Not clear what name is appropriate. Since file.name is unique and works, this is used.
+            batchPrepped.formData.append( submissionFiles[ fileIndex ].file.name, submissionFiles[ fileIndex ].file, submissionFiles[ fileIndex ].file.name );
         } );
 
         // push the batch to the array

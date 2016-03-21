@@ -37,12 +37,12 @@ init = function( something ) {
                 fallbackLng: 'en',
                 joinArrays: '\n',
                 backend: {
-                    loadPath: '/locales/__lng__/translation.json',
+                    loadPath: settings.basePath + '/locales/__lng__/translation.json',
                 },
                 detection: {
                     order: [ 'querystring', 'navigator' ],
                     lookupQuerystring: 'lang',
-                    caches: []
+                    caches: false
                 },
                 interpolation: {
                     prefix: '__',

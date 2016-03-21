@@ -20,3 +20,4 @@ setup/docker/redis_main_data/*
 logs/submissions*
 logs/logrotate
 public/temp-client-config.json
+app/views/styles/component/_system_variables.scss

@@ -412,12 +412,17 @@ function _setEventHandlers() {
         $button.btnBusyState( true );
         setTimeout( function() {
             if ( settings.offline && draft ) {
-                $button.btnBusyState( false );
-                _saveRecord();
+                _saveRecord()
+                    .then( function() {
+                        $button.btnBusyState( false );
+                    } )
+                    .catch( function( e ) {
+                        $button.btnBusyState( false );
+                        throw e;
+                    } );
             } else {
                 form.validate()
                     .then( function( valid ) {
-                        $button.btnBusyState( false );
                         if ( valid ) {
                             if ( settings.offline ) {
                                 return _saveRecord();
@@ -430,6 +435,9 @@ function _setEventHandlers() {
                     } )
                     .catch( function( e ) {
                         gui.alert( e.message );
+                    } )
+                    .then( function() {
+                        $button.btnBusyState( false );
                     } );
             }
         }, 100 );

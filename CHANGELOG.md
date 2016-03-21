@@ -2,14 +2,57 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-[Unreleased] 
+[Unreleased]
+----------------------
+##### Added
+- Chinese translation
+
+##### Fixed
+- RTL form language right-aligns map layer options.
+- Single-page form in pages mode throws exception and has no submit button.
+
+[1.25.1] - 2016-03-14
 ----------------------
 ##### Changed
+- Redirect to new API v2 documentation from /api/v2.
+- Updated French, Dutch, and Persian translations.
+
+##### Fixed
+- Languages not loading sometimes.
+- Submit button not re-enabled after validation error.
+- Performance degradation after changing a value in the form and upon submitting.
+- Older browsers give "Array.from" error, when loading offline-capable webform.
+
+[1.25.0] - 2016-03-09
+----------------------
+##### Added
+- Enketo can now be configured with a base path, allowing Enketo to run with other servers on the same (sub)domain.
+
+##### Removed
+- Offline-capable iframe-friendly webform views and API endpoints.
+
+##### Fixed
+- Subtle 'required' message cannot be translated.
+- Google maps tile layers not using https.
+
+[1.24.1] - 2016-03-04 
+----------------------
+##### Added
+- French translation.
+
+##### Changed
 - More modest font size for bold text, especially in Grid theme.
+- Form UI elements also translatable.
+- Updated Persian translation.
 
 ##### Fixed
 - Options in select minimal are underlined.
 - Group labels in RTL languages are left-aligned.
+- When offline-capable webform is added to iOS homescreen it doesn't work.
+- Submit button "busy" state is reset too early.
+- Add-to-homescreen guidance only shows translation key.
+- Exceptions occuring with file inputs on iOS devices.
+- Only last media file in repeated file input is submitted.
 
 [1.24.0] - 2016-02-23
 ----------------------
