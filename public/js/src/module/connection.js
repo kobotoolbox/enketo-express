@@ -132,7 +132,7 @@ function getDownloadUrl( zipFile ) {
 function _uploadBatch( recordBatch ) {
     return new Promise( function( resolve, reject ) {
         // submission URL is dynamic
-        var submissionUrl = ( settings.enketoId ) ? '/submission/' + settings.enketoIdPrefix + settings.enketoId +
+        var submissionUrl = ( settings.enketoId ) ? settings.basePath + '/submission/' + settings.enketoIdPrefix + settings.enketoId +
             utils.getQueryString( settings.submissionParameter ) : null;
         $.ajax( submissionUrl, {
                 type: 'POST',
