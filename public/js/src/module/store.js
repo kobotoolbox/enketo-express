@@ -178,7 +178,7 @@ function _canStoreBlobs() {
      * and creating an ObjectURL from it, the object URL returns a 404. 
      * Similarly, trying to use FileReader to readAsDataURL, results in a null result.
      *
-     * Last checked in Chrome 46
+     * Last checked in Chrome 49.0.2623.108
      *
      * https://github.com/kobotoolbox/enketo-express/issues/155
      */
@@ -784,12 +784,12 @@ function _updateFile( table, id, file ) {
                     } );
             }
         } else {
-            error = new Error( 'DataError. File not complete or id not provided.' );
+            error = new Error( 'DataError. File not complete or ID not provided.' );
             error.name = 'DataError';
             return Promise.reject( error );
         }
     } else {
-        return Promise.reject( new Error( 'Unknown table or issing id or key.' ) );
+        return Promise.reject( new Error( 'Unknown table or missing ID or key.' ) );
     }
 }
 

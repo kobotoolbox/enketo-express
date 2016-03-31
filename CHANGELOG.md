@@ -2,14 +2,43 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-[Unreleased]
+[1.26.2] - 2016-03-29
+----------------------
+##### Changed
+- Wider select minimal widget in all themes. Full 100% of cell in Grid theme.
+- Always show value in select minimal widget when only a single value is selected.
+- Switched back to transparent icon for browser tabs.
+
+##### Fixed
+- Values in cloned repeat without jr:template are not emptied.
+- Radio buttons and checkboxes not properly aligned vertically.
+- Select minimal widget not aligned properly in RTL language.
+
+[1.26.1] - 2016-03-24
 ----------------------
 ##### Added
-- Chinese translation
+- Hindi translation.
+
+##### Changed
+- Updated Slovak translation.
+- Show version on home page.
+
+##### Fixed
+- If maxSubmissionSize request fails (e.g. unsupported on server) or the maxSubmissionSize value is updated, the form media resources are cleared.
+- If /instance API endpoint is called for a survey that has never been launched the response URL contains a ::null enketo ID.
+
+[1.26.0] - 2016-03-23
+----------------------
+##### Added
+- Chinese translation.
+- Limited IE11 support.
 
 ##### Fixed
 - RTL form language right-aligns map layer options.
 - Single-page form in pages mode throws exception and has no submit button.
+- Very first time a form is stored in the browser, the query parameter to pass to submissions is not stored.
+- When offline, and an attempt is made load a form with an uncached querystring, redirect to querystring-less URL.
+- Submissions broken when basePath is used.
 
 [1.25.1] - 2016-03-14
 ----------------------

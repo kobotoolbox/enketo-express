@@ -8,66 +8,40 @@ var settings = require( './settings' );
 var t = require( './translator' ).t;
 var utils = require( './utils' );
 var $ = require( 'jquery' );
-
-var currentOnlineStatus = null;
 var CONNECTION_URL = settings.basePath + '/connection';
 // location.search is added to pass the lang= parameter, in case this is used to override browser/system locale
 var TRANSFORM_URL = settings.basePath + '/transform/xform' + location.search;
 var TRANSFORM_HASH_URL = settings.basePath + '/transform/xform/hash';
 var EXPORT_URL = settings.basePath + '/export/get-url';
-var SUBMISSION_URL = ( settings.enketoId ) ? settings.basePath + '/submission/' + settings.enketoIdPrefix + settings.enketoId + location.search : null;
 var INSTANCE_URL = ( settings.enketoId ) ? settings.basePath + '/submission/' + settings.enketoIdPrefix + settings.enketoId : null;
 var MAX_SIZE_URL = ( settings.enketoId ) ? settings.basePath + '/submission/max-size/' + settings.enketoIdPrefix + settings.enketoId : null;
 var ABSOLUTE_MAX_SIZE = 100 * 1024 * 1024;
 
 /**
- * Initialize the connection object
- */
-function init() {
-    _checkOnlineStatus();
-    window.setInterval( function() {
-        _checkOnlineStatus();
-    }, 15 * 1000 );
-}
-
-function getOnlineStatus() {
-    return currentOnlineStatus;
-}
-
 /**
  * Checks online status
  */
-function _checkOnlineStatus() {
+function getOnlineStatus() {
     var online;
 
-    $.ajax( {
-        type: 'GET',
-        url: CONNECTION_URL,
-        cache: false,
-        dataType: 'json',
-        timeout: 3000,
-        complete: function( response ) {
-            //important to check for the content of the no-cache response as it will
-            //start receiving the fallback page specified in the manifest!
-            online = typeof response.responseText !== 'undefined' && /connected/.test( response.responseText );
-            _setOnlineStatus( online );
-        }
+    return new Promise( function( resolve, reject ) {
+        $.ajax( {
+            type: 'GET',
+            url: CONNECTION_URL,
+            cache: false,
+            dataType: 'json',
+            timeout: 3000,
+            complete: function( response ) {
+                // It is important to check for the content of the no-cache response as it will
+                // start receiving the fallback page specified in the manifest!
+                online = typeof response.responseText !== 'undefined' && /connected/.test( response.responseText );
+                resolve( online );
+            }
+        } );
     } );
 }
 
-/** 
- * Fires an onlinestatuschange event if the status has changed.
- *
- * @param { boolean } newStatus
- */
-function _setOnlineStatus( newStatus ) {
-    if ( newStatus !== currentOnlineStatus ) {
-        $( window ).trigger( 'onlinestatuschange', newStatus );
-    }
-    currentOnlineStatus = newStatus;
-}
-
-/**
+/*
  * Uploads a complete record
  *
  * @param  {{xml: string, files: [File]}} record
@@ -132,7 +106,7 @@ function getDownloadUrl( zipFile ) {
 function _uploadBatch( recordBatch ) {
     return new Promise( function( resolve, reject ) {
         // submission URL is dynamic
-        var submissionUrl = ( settings.enketoId ) ? '/submission/' + settings.enketoIdPrefix + settings.enketoId +
+        var submissionUrl = ( settings.enketoId ) ? settings.basePath + '/submission/' + settings.enketoIdPrefix + settings.enketoId +
             utils.getQueryString( settings.submissionParameter ) : null;
         $.ajax( submissionUrl, {
                 type: 'POST',
@@ -164,9 +138,6 @@ function _uploadBatch( recordBatch ) {
                     status: jqXHR.status
                         // message: textStatus
                 } );
-                if ( jqXHR.status === 0 ) {
-                    _setOnlineStatus( false );
-                }
             } );
     } );
 }
@@ -536,7 +507,6 @@ function getExistingInstance( props ) {
 }
 
 module.exports = {
-    init: init,
     uploadRecord: uploadRecord,
     getMaximumSubmissionSize: getMaximumSubmissionSize,
     getOnlineStatus: getOnlineStatus,
