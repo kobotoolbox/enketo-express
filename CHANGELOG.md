@@ -2,6 +2,26 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+[Unreleased] 
+----------------------
+##### Added
+- Lao translation.
+
+##### Changed
+- Updated Slovak translation.
+
+##### Fixed
+- HTML title not populating when the form title contains numbers or special characters.
+- Markdown formatting of outputs is not working.
+
+[1.26.3] - 2016-04-01
+----------------------
+##### Changed
+- Select minimal widget is now scrollable and won't stretch form.
+
+##### Fixed
+- Itemset update not retaining existing values when appropriate.
+
 [1.26.2] - 2016-03-29
 ----------------------
 ##### Changed
