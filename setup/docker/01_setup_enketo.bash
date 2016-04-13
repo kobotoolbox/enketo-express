@@ -10,3 +10,5 @@ python setup/docker/create_config.py
 
 # Build.
 grunt
+# FIXME: Now that the client config. has been built, build again as a workaround to a `grunt` task sequencing issue.
+grunt
