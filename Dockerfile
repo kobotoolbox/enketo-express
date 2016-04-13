@@ -36,9 +36,9 @@ RUN mkdir -p ${ENKETO_SRC_DIR}/setup/docker/secrets
 VOLUME ${ENKETO_SRC_DIR}/setup/docker/secrets
 
 # Prepare for execution.
-COPY ./setup/docker/setup_enketo.bash /etc/my_init.d/
-RUN mkdir -p /etc/service/enketo_express
-COPY ./setup/docker/run_enketo.bash /etc/service/enketo_express/run
+RUN ln -s "${ENKETO_SRC_DIR}/setup/docker/01_setup_enketo.bash" /etc/my_init.d/ && \
+    mkdir -p /etc/service/enketo_express && \
+    ln -s "${ENKETO_SRC_DIR}/setup/docker/run_enketo.bash" /etc/service/enketo_express/run
 
 
 EXPOSE 8005
