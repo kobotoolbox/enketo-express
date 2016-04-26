@@ -2,13 +2,32 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-[Unreleased] 
+[Unreleased]
+----------------------
+##### Added
+- 11 XPath math functions.
+
+##### Changed
+- If a submission returns a response with a generic 400 statusCode, output any well-formed OpenRosa response message to the user.
+
+
+[1.27.1] - 2016-04-21
+----------------------
+##### Fixed
+- Update check for forms requiring authentication fails in offline-capable webforms.
+- Number inputs in Grid Theme not printing.
+- Value of distress widget not easily visible when printing.
+- Select element on mobile not showing first value in virgin state (e.g. when creating a repeat).
+
+[1.27.0] - 2016-04-15
 ----------------------
 ##### Added
 - Lao translation.
+- Ability to use piwik for analytics.
 
 ##### Changed
-- Updated Slovak translation.
+- Updated Slovak, German, Dutch translations.
+- Offline capability now enabled by default. **WARNING: to disable offline-capability, make sure to override this in your config.json!**
 
 ##### Fixed
 - HTML title not populating when the form title contains numbers or special characters.
