@@ -2,14 +2,48 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-[Unreleased]
+[1.29.2] - 2016-05-14
+----------------------
+##### Changed
+- Comment widget styling improvements.
+
+##### Fixed
+- Not showing when comment question is in invalid state.
+- Duplicate Enketo Ids are issued. **WARNING: This is a critical fix. [Recommended to deploy immediately!](https://github.com/kobotoolbox/enketo-express/blob/master/doc/duplicates.md)**
+- Unfixable state of surveys with duplicate Enketo Id. ([Tool](https://github.com/kobotoolbox/enketo-express/blob/master/doc/duplicates.md) added to fix) **
+
+[1.29.1] - 2016-05-11
+----------------------
+##### Added
+- Czech translation.
+
+##### Changed
+- Styling of notes (readonly questions).
+- Offline-capable URLs now use "x" instead of "_". Old URLs are still working. **WARNING: APIs return different offline-capable URLs.**
+- Home page layout.
+
+##### Fixed
+- String literals not excluded from /model/instance[1] injection.
+- Samsung S7 sms app rewrites "\_" in  http://enke.to/\_/#abcd URL. 
+- Styling issues with # markup in labels, especially in Grid theme.
+
+[1.29.0] - 2016-05-05
+----------------------
+##### Added
+- Proper namespace support.
+- Comment widget.
+
+##### Fixed
+- Minor markdown issues.
+
+[1.28.0] - 2016-04-27
 ----------------------
 ##### Added
 - 11 XPath math functions.
 
 ##### Changed
 - If a submission returns a response with a generic 400 statusCode, output any well-formed OpenRosa response message to the user.
-
+- Updated Persian and Spanish translations.
 
 [1.27.1] - 2016-04-21
 ----------------------
