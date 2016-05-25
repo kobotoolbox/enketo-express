@@ -64,8 +64,4 @@ else
     cp /tmp/enketo_express_nginx/enketo_express_site_http.conf /etc/nginx/conf.d/
 fi
 
-nginx -g 'daemon off;' &
-nginx_pid=$!
-trap "echo 'SIGTERM recieved. Killing Nginx.' && kill -SIGTERM ${nginx_pid}" SIGTERM
-wait "${nginx_pid}"
-exit $(($? - 128 - 15)) # http://unix.stackexchange.com/questions/10231/when-does-the-system-send-a-sigterm-to-a-process#comment13523_10231
+exec nginx -g 'daemon off;' &
