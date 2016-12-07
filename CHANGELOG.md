@@ -2,6 +2,207 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+[Unreleased]
+---------------------
+##### Fixed
+- Label of comment widget not shown when used with an analog-scale question.
+- Entire label of complex (geo, analog scale) widget triggers comment button click.
+- Comment icon not displayed inline after non-block label of analog-scale widget.
+
+[1.36.0] - 2016-12-02 
+---------------------
+##### Added
+- ArcGIS widget: multiple basemaps with toggle button.
+- Support for preload attributes on nodes that have a form control. 
+
+##### Changed
+- Updated Persian, Finnish and Dutch translations.
+- Readonly styling of: likert widget, compact picker, dates, datetimes, and others.
+
+##### Fixed
+- User is able to manipulate readonly widgets: distresspicker, analog-scale-picker, select-desktop-picker, filepickers, geopicker.
+- Calculations do not update: analog-scale-picker, distresspicker, mobile regular select, mobile multiselect picker preview, timepicker, geopicker, esri-geopicker.
+- XPath calculation returing a datetime string for an XML node with type time is not converted, resulting in an invalid time.
+- Geo widget on touchscreens does not hide Google Maps layer when exiting map view
+
+[1.35.3] - 2016-11-08
+---------------------
+##### Added
+- Finnish translation.
+
+##### Fixed
+- Offline icon position slightly off.
+
+
+[1.35.2] - 2016-11-04
+---------------------
+##### Changed
+- Updated Czech, Slovak, German and Dutch translations.
+
+##### Fixed
+- Min() and max() evaluation causes infinite loop when used with multiple node-set arguments.
+
+[1.35.1] - 2016-10-31
+---------------------
+##### Fixed
+- Repeat names with dots do not create multiple repeats upon loading and do not default values except for the first repeat.
+- Public form.validate() function is skipping constraint validation if xml type is string, binary, select or select1.
+
+[1.35.0] - 2016-10-27
+---------------------
+##### Added
+- Comment widget enabled by default.
+
+##### Changed
+- Allow form to load if external data fails to dowload (but still show strong warning).
+
+##### Fixed
+- XML entities in CSV document are not encoded.
+- Empty string literals ('""') are evaluated to 'undefined'.
+- MS Edge does not properly clone repeats.
+- "Different Encoding" error if instance encoding is specified, even if it's compatible.
+
+[1.34.5] - 2016-10-20
+---------------------
+##### Fixed
+- If OpenRosa server takes more than 2 minutes to respond to /submission, records stay stuck in browser queue despite being received.
+- Too much whitespace in form header on small iOS 9 devices in Pages mode. 
+
+[1.34.4] - 2016-10-18
+---------------------
+##### Fixed
+- If repeat has no template, duplicate and conflicting ordinal attributes are added.
+- Loading a record with namespaced attributes utterly fails in IE11.
+- When record contains text nodes as siblings of repeats, new repeats are not added in correct position.
+
+[1.34.3] - 2016-10-17
+---------------------
+##### Changed
+- If logo source in config.json is "", remove all branding space in Pages mode on small screens.
+
+[1.34.2] - 2016-10-13
+---------------------
+##### Changed
+- Even less whitespace in form header and footer, especially in pages mode.
+
+##### Fixed
+- When branch is disabled an exception 'Cannot read property "readonly"' occurs.
+
+[1.34.1] - 2016-10-11
+---------------------
+##### Added
+- Documentation on the "comment feature".
+
+##### Changed
+- Tightened up form header and form footer with less whitespace especially in pages mode.
+
+##### Fixed
+- XPath functions containing "" or '' and refer to absolute paths sometimes produce incorrect result.
+
+[1.34.0] - 2016-09-19 
+---------------------
+##### Added
+- Advanced and regular single submission webform views and API endpoints. **WARNING: requires [additional configuration item](https://github.com/kobotoolbox/enketo-express/blob/master/config/README.md#less-secure-encryption-key)!**
+
+[1.33.2] - 2016-09-16
+---------------------
+##### Added
+- Documentation on ordinals.
+
+##### Fixed
+- IE11 adds rogue namespaces to ordinal attributes.
+
+[1.33.1] - 2016-09-14
+---------------------
+##### Changed
+- Updated Persian translation
+
+##### Fixed
+- Webform previews have incorrect (non-existing) JS bundle reference.
+
+[1.33.0] - 2016-09-07
+---------------------
+##### Added
+- Optional ability to add repeat ordinal attributes to model in enketo namespace.
+- Improved extensibility.
+
+##### Changed
+- Validation logic refactored and behaviour for required field validation sligthly changed. If a required has a value and is then emptied, the background will turn red.
+- Updated German, Czech, Dutch and Slovak translations.
+
+##### Removed
+- Workaround for [ODK Aggregate bug](https://github.com/opendatakit/opendatakit/issues/1116) because it doesn't really solve anything.
+
+##### Fixed
+- Fragile namespace handling in model.
+
+[1.32.4] - 2016-08-15
+---------------------
+##### Fixed
+- Compact appearances hide text label even if media label is absent.
+- A potential scenario where the server cache gets never updated.
+
+[1.32.3] - 2016-07-29
+---------------------
+##### Fixed
+- Offline-capable webforms not working when offline.
+
+[1.32.2] - 2016-07-27
+---------------------
+##### Fixed
+- Slow performance of pulldata for huge files.
+
+[1.32.1] - 2016-07-21
+---------------------
+##### Changed
+- Updated German, Slovak and Czech translations.
+
+##### Fixed
+- String values are trimmed before added to model.
+- Comment widget scrolling and button hover behavior.
+
+[1.32.0] - 2016-07-15
+---------------------
+##### Added
+- Ability to add additional translation strings in port of EE.
+
+##### Changed
+- Updated Lao translation.
+- Show "*" for all questions with a "required" expression.
+- Switched to enketo namespace for "for" attribute.
+
+##### Fixed
+- Npm 3 sass build error.
+- Integer and decimal type values convert 'NaN' to '' (reverted ODK Aggregate bug workaround).
+
+[1.31.0] - 2016-06-29
+---------------------
+##### Added
+- Invalid XForms without /meta/instanceID will now be "fixed" by Enketo (temporarily).
+- Ability to configure via environment variables instead of config.json.
+- Documentation for deployment with Heroku
+
+##### Removed
+- Attempt to persist redis in Enketo app itself - **WARNING: persistence is now 100% arranged in your redis configuration!**
+
+[1.30.1] - 2016-06-10
+---------------------
+##### Fixed
+- External data not working in IE11.
+- XForm without instanceID does not show load error.
+
+[1.30.0] - 2016-06-08
+---------------------
+##### Added
+- Support for user-specific dynamic external data documents.
+- Widgets now have access to model's evaluate function.
+
+##### Changed
+- Updated Persian, Dutch and Czech translations.
+- When requesting /formList, add formID query parameter (for performance).
+- Comment widget now shown below linked question.
+- Comment widget automatically focuses on comment input.
+
 [1.29.4] - 2016-05-26 
 ---------------------
 ##### Changed

@@ -70,6 +70,26 @@ function blobToArrayBuffer( blob ) {
     } );
 }
 
+function blobToString( blob ) {
+    var reader = new FileReader();
+    return new Promise( function( resolve, reject ) {
+        reader.onloadend = function() {
+            resolve( reader.result );
+        };
+        reader.onerror = function( e ) {
+            reject( e );
+        };
+
+        // There is some quirky Chrome and Safari behaviour if blob is undefined or a string
+        // so we peform an additional check
+        if ( !( blob instanceof Blob ) ) {
+            reject( new Error( 'TypeError: Require Blob' ) );
+        } else {
+            reader.readAsText( blob );
+        }
+    } );
+}
+
 /**
  * The inverse of blobToDataUri, that converts a dataURL back to a Blob
  *
@@ -151,7 +171,7 @@ function csvToXml( csv ) {
     xmlStr = '<root>' +
         rows.map( function( row ) {
             return '<item>' + row.map( function( value, index ) {
-                return '<{n}>{v}</{n}>'.replace( /{n}/g, headers[ index ] ).replace( /{v}/g, value.trim() );
+                return '<{n}>{v}</{n}>'.replace( /{n}/g, headers[ index ] ).replace( /{v}/g, _encodeXmlEntities( value.trim() ) );
             } ).join( '' ) + '</item>';
         } ).join( '' ) +
         '</root>';
@@ -217,9 +237,27 @@ function _throwInvalidXmlNodeName( name ) {
     }
 }
 
+function _encodeXmlEntities( str ) {
+    return str.replace( /[<>&'"]/g, function( c ) {
+        switch ( c ) {
+            case '<':
+                return '&lt;';
+            case '>':
+                return '&gt;';
+            case '&':
+                return '&amp;';
+            case '\'':
+                return '&apos;';
+            case '"':
+                return '&quot;';
+        }
+    } );
+}
+
 module.exports = {
     blobToDataUri: blobToDataUri,
     blobToArrayBuffer: blobToArrayBuffer,
+    blobToString: blobToString,
     dataUriToBlob: dataUriToBlob,
     getThemeFromFormStr: getThemeFromFormStr,
     getTitleFromFormStr: getTitleFromFormStr,

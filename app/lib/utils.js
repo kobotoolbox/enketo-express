@@ -17,6 +17,25 @@ function getOpenRosaKey( survey, prefix ) {
     return prefix + cleanUrl( survey.openRosaServer ) + ',' + survey.openRosaId.trim();
 }
 
+function getXformsManifestHash( manifest, type ) {
+    var hash = '';
+    var filtered;
+
+    if ( !manifest || manifest.length === 0 ) {
+        return hash;
+    }
+    if ( type === 'all' ) {
+        return md5( JSON.stringify( manifest ) );
+    }
+    if ( type ) {
+        filtered = manifest.map( function( mediaFile ) {
+            return mediaFile[ type ];
+        } );
+        return md5( JSON.stringify( filtered ) );
+    }
+    return hash;
+}
+
 /**
  * cleans a Server URL so it becomes useful as a db key
  * It strips the protocol, removes a trailing slash, removes www, and converts to lowercase
@@ -45,6 +64,34 @@ function md5( message ) {
     var hash = crypto.createHash( 'md5' );
     hash.update( message );
     return hash.digest( 'hex' );
+}
+
+/**
+ * This is not secure encryption as it doesn't use a random cipher. Therefore the result is 
+ * always the same for each text & pw (which is desirable in this case). 
+ * This means the password is vulnerable to be cracked,
+ * and we should use a dedicated low-importance password for this.
+ * 
+ * @param  {string} text The text to be encrypted
+ * @param  {string} pw   The password to use for encryption
+ * @return {string}      The encrypted result.
+ */
+function insecureAes192Encrypt( text, pw ) {
+    var encrypted;
+    var cipher = crypto.createCipher( 'aes192', pw );
+    encrypted = cipher.update( text, 'utf8', 'hex' );
+    encrypted += cipher.final( 'hex' );
+
+    return encrypted;
+}
+
+function insecureAes192Decrypt( encrypted, pw ) {
+    var decrypted;
+    var decipher = crypto.createDecipher( 'aes192', pw );
+    decrypted = decipher.update( encrypted, 'hex', 'utf8' );
+    decrypted += decipher.final( 'utf8' );
+
+    return decrypted;
 }
 
 function randomString( howMany, chars ) {
@@ -101,10 +148,13 @@ function areOwnPropertiesEqual( a, b ) {
 
 module.exports = {
     getOpenRosaKey: getOpenRosaKey,
+    getXformsManifestHash: getXformsManifestHash,
     cleanUrl: cleanUrl,
     isValidUrl: isValidUrl,
     md5: md5,
     randomString: randomString,
     pickRandomItemFromArray: pickRandomItemFromArray,
-    areOwnPropertiesEqual: areOwnPropertiesEqual
+    areOwnPropertiesEqual: areOwnPropertiesEqual,
+    insecureAes192Decrypt: insecureAes192Decrypt,
+    insecureAes192Encrypt: insecureAes192Encrypt
 };

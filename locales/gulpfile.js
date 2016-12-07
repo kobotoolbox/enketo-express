@@ -17,12 +17,12 @@ gulp.task( 'default', function() {
             '../app/lib/communicator/**/*.js',
             '../app/controllers/**/*.js',
             '../app/models/**/*.js',
-            '../node_modules/enketo-core/src/**/*.js',
-            '../public/widget/**/*.js'
+            '../node_modules/enketo-core/src/**/*.js'
         ] )
         .pipe( i18next( {
             locales: [ 'en' ],
             functions: [ 't', 'TError' ],
+            ignoreVariables: true,
             // This is very odd, but has something to do with Gulp
             // changing the base to the src argument, in this case
             // apparently to url in the first item of the src argument array

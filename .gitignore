@@ -6,13 +6,14 @@ public/js/*-bundle.js
 public/css/*.css
 public/lib/enketo-core
 public/lib/bower-components
-locales/en/translation_old.json
+locales/*/translation-combined.json
 config/config.json
 .rebooted
 .vagrant
 .scratchpad
 .nodemon-*
 .DS_Store
+.env
 enketo-main.rdb
 setup/docker/secrets/*
 setup/docker/redis_main_data/*

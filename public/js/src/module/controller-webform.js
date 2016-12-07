@@ -43,7 +43,7 @@ function init( selector, data ) {
             $formprogress = $( '.form-progress' );
 
             _setEventHandlers();
-            _setLogoutLinkVisibility();
+            setLogoutLinkVisibility();
 
             if ( loadErrors.length > 0 ) {
                 throw loadErrors;
@@ -201,19 +201,20 @@ function _loadRecord( instanceId, confirmed ) {
  */
 function _submitRecord() {
     var record;
-    var redirect;
+    // TODO: after a grace period (say end of 2016): var redirect = settings.type === 'single'
+    var redirect = !settings.offline && ( settings.returnUrl || settings.type === 'single' );
     var beforeMsg;
     var authLink;
     var level;
-    var msg = [];
+    var msg = '';
 
     form.getView().$.trigger( 'beforesave' );
 
     beforeMsg = ( redirect ) ? t( 'alert.submission.redirectmsg' ) : '';
     authLink = '<a href="/login" target="_blank">' + t( 'here' ) + '</a>';
 
-    gui.alert( beforeMsg + '<br />' +
-        '<div class="loader-animation-small" style="margin: 10px auto 0 auto;"/>', t( 'alert.submission.msg' ), 'bare' );
+    gui.alert( beforeMsg +
+        '<div class="loader-animation-small" style="margin: 40px auto 0 auto;"/>', t( 'alert.submission.msg' ), 'bare' );
 
     record = {
         'xml': form.getDataStr(),
@@ -228,22 +229,43 @@ function _submitRecord() {
             level = 'success';
 
             if ( result.failedFiles && result.failedFiles.length > 0 ) {
-                msg = [ t( 'alert.submissionerror.fnfmsg', {
+                msg = t( 'alert.submissionerror.fnfmsg', {
                     failedFiles: result.failedFiles.join( ', ' ),
                     supportEmail: settings.supportEmail
-                } ) ];
+                } ) + '<br/>';
                 level = 'warning';
             }
 
             // this event is used in communicating back to iframe parent window
             $( document ).trigger( 'submissionsuccess' );
 
-            if ( settings.returnUrl ) {
-                msg += '<br/>' + t( 'alert.submissionsuccess.redirectmsg' );
+            if ( redirect ) {
+                if ( settings.type === 'single' && !settings.multipleAllowed ) {
+                    var now = new Date();
+                    var age = 31536000;
+                    var d = new Date();
+                    /**
+                     * Manipulate the browser history to work around potential ways to 
+                     * circumvent protection against multiple submissions:
+                     * 1. After redirect, click Back button to load cached version.
+                     */
+                    history.replaceState( {}, '', settings.defaultReturnUrl + '?taken=' + now.getTime() );
+                    /**
+                     * The above replaceState doesn't work in Safari and probably in 
+                     * some other browsers (mobile). It shows the 
+                     * final submission dialog when clicking Back.
+                     * So we remove the form...
+                     */
+                    $( 'form.or' ).empty();
+                    $( 'button#submit-form' ).remove();
+                    d.setTime( d.getTime() + age * 1000 );
+                    document.cookie = settings.enketoId + '=' + now.getTime() + ';path=/single;max-age=' + age + ';expires=' + d.toGMTString() + ';';
+                }
+                msg += t( 'alert.submissionsuccess.redirectmsg' );
                 gui.alert( msg, t( 'alert.submissionsuccess.heading' ), level );
                 setTimeout( function() {
-                    location.href = decodeURIComponent( settings.returnUrl );
-                }, 1500 );
+                    location.href = decodeURIComponent( settings.returnUrl || settings.defaultReturnUrl );
+                }, 1200 );
             } else {
                 msg = ( msg.length > 0 ) ? msg : t( 'alert.submissionsuccess.msg' );
                 gui.alert( msg, t( 'alert.submissionsuccess.heading' ), level );
@@ -515,8 +537,8 @@ function _setEventHandlers() {
         }
     } );
 
-    if ( _inIframe() && settings.parentWindowOrigin ) {
-        $doc.on( 'submissionsuccess edited.enketo', _postEventAsMessageToParentWindow );
+    if ( inIframe() && settings.parentWindowOrigin ) {
+        $doc.on( 'submissionsuccess edited.enketo', postEventAsMessageToParentWindow );
     }
 
     $doc.on( 'queuesubmissionsuccess', function() {
@@ -565,7 +587,7 @@ function _handleAlternativeDownloadRequest( event, zipFile ) {
     return false;
 }
 
-function _setLogoutLinkVisibility() {
+function setLogoutLinkVisibility() {
     var visible = document.cookie.split( '; ' ).some( function( rawCookie ) {
         return rawCookie.indexOf( '__enketo_logout=' ) !== -1;
     } );
@@ -585,7 +607,7 @@ function _getDraftStatus() {
  * Determines whether the page is loaded inside an iframe
  * @return {boolean} [description]
  */
-function _inIframe() {
+function inIframe() {
     try {
         return window.self !== window.top;
     } catch ( e ) {
@@ -597,7 +619,7 @@ function _inIframe() {
  * Attempts to send a message to the parent window, useful if the webform is loaded inside an iframe.
  * @param  {{type: string}} event
  */
-function _postEventAsMessageToParentWindow( event ) {
+function postEventAsMessageToParentWindow( event ) {
     if ( event && event.type ) {
         try {
             window.parent.postMessage( JSON.stringify( {
@@ -610,5 +632,8 @@ function _postEventAsMessageToParentWindow( event ) {
 }
 
 module.exports = {
-    init: init
+    init: init,
+    setLogoutLinkVisibility: setLogoutLinkVisibility,
+    inIframe: inIframe,
+    postEventAsMessageToParentWindow: postEventAsMessageToParentWindow
 };

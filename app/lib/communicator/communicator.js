@@ -15,12 +15,12 @@ var parser = new require( 'xml2js' ).Parser();
  * @return {[type]}               promise
  */
 function getXFormInfo( survey ) {
-    if ( !survey.openRosaServer ) {
+    if ( !survey || !survey.openRosaServer ) {
         throw new Error( 'No server provided.' );
     }
 
     return _request( {
-        url: getFormListUrl( survey.openRosaServer ),
+        url: getFormListUrl( survey.openRosaServer, survey.openRosaId ),
         auth: survey.credentials,
         headers: {
             cookie: survey.cookie
@@ -110,7 +110,7 @@ function getMaxSize( survey ) {
 
 function authenticate( survey ) {
     var options = {
-        url: getFormListUrl( survey.openRosaServer ),
+        url: getFormListUrl( survey.openRosaServer, survey.openRosaId ),
         auth: survey.credentials,
         // Formhub has a bug and cannot use the correct HEAD method.
         method: config[ 'linked form and data server' ][ 'legacy formhub' ] ? 'get' : 'head'
@@ -160,8 +160,10 @@ function getAuthHeader( url, credentials ) {
     } );
 }
 
-function getFormListUrl( server ) {
-    return ( server.lastIndexOf( '/' ) === server.length - 1 ) ? server + 'formList' : server + '/formList';
+function getFormListUrl( server, id ) {
+    var query = ( id ) ? '?formID=' + id : '';
+    var path = ( server.lastIndexOf( '/' ) === server.length - 1 ) ? 'formList' : '/formList';
+    return server + path + query;
 }
 
 function getSubmissionUrl( server ) {
@@ -270,8 +272,6 @@ function _findFormAddInfo( formListXml, survey ) {
     var index;
     var error;
 
-    debug( 'looking for form object with id "' + survey.openRosaId + '" in formlist' );
-
     return new Promise( function( resolve, reject ) {
         // first convert to JSON to make it easier to work with
         _xmlToJson( formListXml )
@@ -314,7 +314,6 @@ function _simplifyFormObj( formObj ) {
             formObj[ prop ] = formObj[ prop ][ 0 ].toString();
         }
     }
-    formObj.manifestUrl = formObj.manifestUrl || null;
 
     return formObj;
 }

@@ -1,10 +1,9 @@
 Configuration
 ==============
 
-All configuration is done in config/config.json. **Leave config/default-config.json unchanged.** 
-Recommended way to start is to copy config/default-config.json and rename it to config/config.json (`cp config/default-config.json config/config.json`).
+All configuration is done in config/config.json or with equivalent environment variables (see [sample.env](./sample.env)). **Leave config/default-config.json unchanged.** Whichever of these 2 methods you choose, will override the defaults set in config/default-config.json.
 
-The **bold items are required**. Others are optional.
+Below is a complete list of all configuration items. The **bold items are important to set**. Others are less important.
 
 #### app name 
 Just use `"Enketo for [your service name]"`. It is not used much in the app.
@@ -24,8 +23,14 @@ Enable or disable offline functionality. Is either `false` or `true`.
 * authentication -> external login url that sets cookie: Will only be used if authentication -> managed by enketo is set to `false` and allows a deeper integration for a custom server. It contains a URL on your form/data server where Enketo should redirect a user to when the server returns a 401 response. That url should set a cookie that Enketo will pass to the server whenever it needs to retrieve a form resource or submit data. The url should contain a {RETURNURL} portion which Enketo will populate to send the user back to the webform once authentication has completed. See [README](../README.md#authentication) for more details.
 * legacy formhub -> Formhub is a dead project and therefore has bugs that won't be fixed. Setting this setting to `true` temporarily works around some of these bugs to give you time to switch to a better alternative that is alive.
 
+#### timeout
+Connection timeout in milliseconds used throughout Enketo. This is particularly relevant for submissions from Enketo to the OpenRosa server. 
+
 #### encryption key 
 Enketo will use this to encrypt sensitive information whenever necessary (e.g. for the form server credentials that are stored in a cookie in the user's browser). Never share this key and never change it after the initial configuration (unless it was compromised). No specific key length requirements (I think).
+
+#### less secure encryption key 
+Enketo will use this to symmetrically encrypt enketo IDs for the special single-submission webform views. This encryption should be considered crackable and is not used for sensitive data. For security reasons it therefore requires a separate key. Do not change this key after initial configuration as it will break some webform URLs.
 
 #### default theme 
 The theme to use if the survey has no user-or-api-defined theme. Values could be `"kobo"`, `"formhub"`, `"grid"`, or `"[yourowncustomtheme]"`.
@@ -87,3 +92,6 @@ For most form servers this item does nothing. If you would like to pass a partic
 
 #### disable save as draft
 Completely disable save-as-draft functionality in offline-capable webforms by settings this to true.
+
+#### repeat ordinals
+Whether to add custom http://enketo.org/xforms namespaced `ordinal` and `last-used-ordinal` attributes to repeat nodes in the model. The default is `false`. Most user will not need to set this configuration item.

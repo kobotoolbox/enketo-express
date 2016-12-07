@@ -40,12 +40,13 @@ The app should now be running on [localhost](http://localhost).
 
 ### How to install a production server
 
-See [this tutorial](http://blog.enketo.org/install-enketo-production-ubuntu/) for detailed instructions.
-
+See [this tutorial](http://blog.enketo.org/install-enketo-production-ubuntu/) for detailed instructions. Another option, for some people, is to deploy with [Heroku](./doc/heroku.md).
 
 ### How to configure
 
-All configuration is done in config/config.json. Strictly speaking, this file only has to contain the [default properties](./config/default-config.json) that you'd like to override, but it might be safer to include all properties. The configuration items have self-explanatory names and helpful sample values. After editing the configuration, the app will need to be restarted.
+All configuration is normally done in config/config.json. Strictly speaking, this file only has to contain the [default properties](./config/default-config.json) that you'd like to override, but it is safer to include all properties, to avoid surprises when the default configuration changes. After editing the configuration, the app will need to be restarted.
+
+As an alternative, there is an option to use environment variables instead of a config/config.json file. If the config/config.json file is missing Enketo will assume configuration is done with environment variables. A combination of both options is not supported. See [config/sample.env](./config/sample.env) for more information on equivalent environment variable names.
 
 The default production configuration includes 2 redis instances. You can **greatly simplify installation by using 1 redis instance** instead (for non-production usage). To do this set the redis.cache.port to 6379 (same as redis.main.port). To set up 2 instances properly for production, you might find the vagrant setup steps in [bootstrap.sh](./setup/bootstrap.sh) useful.
 
@@ -58,7 +59,7 @@ To configure your own custom external authentication also see [this section](#au
 
 **Always** use the API to obtain webform URLs. Never try to craft or manipulate Enketo webform URLs yourself. This will make your Enketo integration future proof in case the URL structure changes. The API is stable, but webform URLs definitely are not.
 
-The API is accessible on **/api/v2** and **/api/v1**. See [documentation](http://apidocs.enketo.org) on how to use it.
+The API is accessible on **/api/v2** and **/api/v1**. See the [documentation](http://apidocs.enketo.org) on how to use it.
 
 
 ### How to run
@@ -89,14 +90,9 @@ The easiest way to start the app in development and debugging mode with liverelo
 
 Only the latest modern browser versions on Windows, OS X, Linux, Android and iOS are officially supported. Chrome or Firefox are the best browsers on all platforms except on iOS. On iOS there are no modern browsers due to Apple's restrictions on third party browsers, but Safari is the least bad option.
 
-Saving as draft and editing of existing records is not supported by Internet Explorer 11. That browser also has some styling degradations that are considered acceptable.
+Internet Explorer 11 is still supported has some styling degradations that are considered acceptable. This browser is not recommended.
 
 **Enketo endeavors to show a helpful (multi-lingual) error message on unsupported browsers when the form is loaded to avoid serious issues.**
-
-
-### Differences with [enketo/enketo-legacy](https://github.com/enketo/enketo-legacy)
-
-See [this doc](./doc/differences.md)
 
 
 ### Themes
@@ -138,7 +134,7 @@ _Form authentication_ is only secure when Enketo is running on **https**. To avo
 
 ### Translation
 
-The user interface was translated by: Francesc Garre (Spanish), Sounay Phothisane (Lao), Linxin Guo (Chinese), Emmanuel Jean, Renaud Gaudin (French), Trần Quý Phi (Vietnamese), Reza Doosti, Hossein Azad, Davood Mottalee (Persian), Tomas Skripcak (Slovak, Czech, German), Daniela Baldova (Czech), Robert Michael Lundin (Norwegian), Margaret Ndisha, Charles Mutisya (Swahili), Panzero Mauro (Italian), Gabriel Kreindler (Romanian), Jason Reeder, Omar Nazar, Sara Sameer, David Gessel (Arabic), Tino Kreutzer (German), Wasilis Mandratzis-Walz (German, Greek), Luis Molina (Spanish), Martijn van de Rijdt (Dutch).
+The user interface was translated by: Katri Jalava (Finnish), Francesc Garre (Spanish), Sounay Phothisane (Lao), Linxin Guo (Chinese), Emmanuel Jean, Renaud Gaudin (French), Trần Quý Phi (Vietnamese), Reza Doosti, Hossein Azad, Davood Mottalee (Persian), Tomas Skripcak (Slovak, Czech, German), Daniela Baldova (Czech), Robert Michael Lundin (Norwegian), Margaret Ndisha, Charles Mutisya (Swahili), Panzero Mauro (Italian), Gabriel Kreindler (Romanian), Jason Reeder, Omar Nazar, Sara Sameer, David Gessel (Arabic), Tino Kreutzer (German), Wasilis Mandratzis-Walz (German, Greek), Luis Molina (Spanish), Martijn van de Rijdt (Dutch).
 
 _Send a message if you'd like to contribute! We use an easy web interface provided by [Transifex](https://www.transifex.com/projects/p/enketo-express/)._
 
@@ -153,9 +149,10 @@ See [the license document](LICENSE) for this application's license.
 
 Note that some of the libraries used in this app have different license. In particular note [this one](https://github.com/enketo/enketo-xpathjs).
 
-The Enketo logo and Icons are trademarked by [Enketo LLC](https://www.linkedin.com/company/enketo-llc). They can be used in the KoBoCAT VM only. Replace the logo images in [/public/images](/public/images) with your own or contact [Enketo LLC](mailto:info@enketo.org) to discuss the use inside your app.
+Note the 'Powered by Enketo' footer requirement as explained in [enketo-core](https://github.com/enketo/enketo-core#license). This requirement is applicable to all Enketo apps, including this one, unless an exemption was granted.
 
-However, note the logo-use exception as part of the 'Powered by Enketo' footer requirement as explained in [enketo-core](https://github.com/enketo/enketo-core#license), which is applicable to all Enketo apps, including this one.
+The Enketo logo and Icons are trademarked by [Enketo LLC](https://www.linkedin.com/company/enketo-llc) and should only be used for the 'Powered by Enketo' requirement mentioned above (if applicable). To prevent infringement simply replace the logo images in [/public/images](/public/images) with your own or contact [Enketo LLC](mailto:info@enketo.org) to discuss the use inside your app.
+
 
 ### Change log
 

@@ -108,6 +108,7 @@ function _uploadBatch( recordBatch ) {
         // submission URL is dynamic
         var submissionUrl = ( settings.enketoId ) ? settings.basePath + '/submission/' + settings.enketoIdPrefix + settings.enketoId +
             utils.getQueryString( settings.submissionParameter ) : null;
+
         $.ajax( submissionUrl, {
                 type: 'POST',
                 data: recordBatch.formData,
@@ -119,7 +120,7 @@ function _uploadBatch( recordBatch ) {
                     'X-OpenRosa-Deprecated-Id': recordBatch.deprecatedId,
                     'X-OpenRosa-Instance-Id': recordBatch.instanceId
                 },
-                timeout: 300 * 1000
+                timeout: settings.timeout
             } )
             .done( function( data, textStatus, jqXHR ) {
                 var result = {
@@ -333,7 +334,8 @@ function getFormParts( props ) {
                     enketoId: props.enketoId,
                     serverUrl: props.serverUrl,
                     xformId: props.xformId,
-                    xformUrl: props.xformUrl
+                    xformUrl: props.xformUrl,
+                    noHashes: props.noHashes || false
                 }
             } )
             .done( function( data ) {
@@ -362,17 +364,22 @@ function _getExternalData( survey ) {
 
         survey.externalData = $( doc ).find( 'instance[id][src]' ).map( function( index, el ) {
             return {
-                id: el.id,
+                id: $( el ).attr( 'id' ),
                 src: $( el ).attr( 'src' )
             };
         } ).get();
 
-        survey.externalData.forEach( function( instance ) {
+        survey.externalData.forEach( function( instance, index ) {
             tasks.push( _getDataFile( instance.src ).then( function( data ) {
-                // if CSV file, transform to XML String
-                instance.xmlStr = ( typeof data === 'string' ) ? utils.csvToXml( data ) : ( new XMLSerializer() ).serializeToString( data );
-                return instance;
-            } ) );
+                    // if CSV file, transform to XML String
+                    instance.xmlStr = ( typeof data === 'string' ) ? utils.csvToXml( data ) : ( new XMLSerializer() ).serializeToString( data );
+                    return instance;
+                } )
+                .catch( function( e ) {
+                    survey.externalData.splice( index, 1 );
+                    // let external data files fail quietly. Rely on Enketo Core to show error.
+                    console.error( e );
+                } ) );
         } );
     } catch ( e ) {
         return Promise.reject( e );
