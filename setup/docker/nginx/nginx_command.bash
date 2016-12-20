@@ -64,4 +64,4 @@ else
     cp /tmp/enketo_express_nginx/enketo_express_site_http.conf /etc/nginx/conf.d/
 fi
 
-exec nginx -g 'daemon off;' &
+exec nginx -g 'daemon off;'
