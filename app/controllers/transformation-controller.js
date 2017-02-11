@@ -98,6 +98,7 @@ function getSurveyHash( req, res, next ) {
 
 function _getFormDirectly( survey ) {
     return communicator.getXForm( survey )
+        .then( communicator.getManifest )
         .then( _addMediaMap )
         .then( transformer.transform );
 }
@@ -270,6 +271,16 @@ function _getSurveyParams( req ) {
         // The previews using the xform parameter are less strictly checked.
         // If an account with the domain is active, the check will pass.
         domain = urlObj.protocol + '//' + urlObj.host;
+
+        if ( params.manifestUrl ) {
+            urlObj = url.parse( params.xformUrl );
+            if ( !urlObj || !urlObj.protocol || !urlObj.host ) {
+                error = new Error( 'Bad Request. Manifest URL is invalid.' );
+                error.status = 400;
+                throw error;
+            }
+        }
+
         return account.check( {
                 openRosaServer: domain
             } )
@@ -281,6 +292,12 @@ function _getSurveyParams( req ) {
                     },
                     account: survey.account
                 } );
+            } )
+            .then( function( survey ) {
+                if ( params.manifestUrl ) {
+                    survey.info.manifestUrl = params.manifestUrl;
+                }
+                return Promise.resolve( survey );
             } )
             .then( function( survey ) {
                 survey.noHashes = noHashes;

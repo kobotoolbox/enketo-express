@@ -335,6 +335,7 @@ function getFormParts( props ) {
                     serverUrl: props.serverUrl,
                     xformId: props.xformId,
                     xformUrl: props.xformUrl,
+                    manifestUrl: props.manifestUrl,
                     noHashes: props.noHashes || false
                 }
             } )
