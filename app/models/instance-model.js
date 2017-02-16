@@ -31,7 +31,7 @@ function _cacheInstance( survey ) {
             if (survey.instanceAttachments){
               instanceAttachments = survey.instanceAttachments;
             } else {
-              instanceAttachments = [];
+              instanceAttachments = {};
             }
             // first check if record exists (i.e. if it is being edited)
             client.hgetall( 'in:' + survey.instanceId, function( err, obj ) {
