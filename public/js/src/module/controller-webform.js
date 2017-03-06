@@ -36,9 +36,14 @@ function init( selector, data ) {
                 data.instanceStr = record.xml;
             }
 
+            if (data.instanceAttachments){
+                fileManager.init(data.instanceAttachments);
+            }
+
             form = new Form( formSelector, data, formOptions );
             loadErrors = form.init();
 
+	    fileManager.init();
             if ( form.getEncryptionKey() ) {
                 loadErrors.unshift( '<strong>' + t( 'error.encryptionnotsupported' ) + '</strong>' );
             }

@@ -18,11 +18,15 @@ var coreUtils = require( 'enketo-core/src/js/utils' );
 var supported = typeof FileReader !== 'undefined';
 var notSupportedAdvisoryMsg = '';
 
+var instanceAttachments;
+
 /**
  * Initialize the file manager .
  * @return {[type]} promise boolean or rejection with Error
  */
-function init() {
+function init(attachments) {
+
+    instanceAttachments = attachments;
 
     return new Promise( function( resolve, reject ) {
         if ( supported ) {
@@ -62,7 +66,10 @@ function getFileUrl( subject, filename ) {
         if ( !subject ) {
             resolve( null );
         } else if ( typeof subject === 'string' ) {
-            if ( !store.isAvailable() ) {
+            if ( instanceAttachments && instanceAttachments[subject]) {
+                resolve(instanceAttachments[subject]);
+            }
+	    if ( !store.isAvailable() ) {
                 // e.g. in an online-only edit view
                 reject( new Error( 'store not available' ) );
             } else {
