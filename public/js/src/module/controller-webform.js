@@ -43,7 +43,6 @@ function init( selector, data ) {
             form = new Form( formSelector, data, formOptions );
             loadErrors = form.init();
 
-	    fileManager.init();
             if ( form.getEncryptionKey() ) {
                 loadErrors.unshift( '<strong>' + t( 'error.encryptionnotsupported' ) + '</strong>' );
             }
