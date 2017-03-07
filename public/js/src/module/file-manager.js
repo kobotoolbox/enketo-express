@@ -29,7 +29,7 @@ function init(attachments) {
     instanceAttachments = attachments;
 
     return new Promise( function( resolve, reject ) {
-        if ( supported ) {
+       	if ( supported ) {
             resolve( true );
         } else {
             reject( new Error( 'FileReader not supported.' ) );
@@ -66,10 +66,10 @@ function getFileUrl( subject, filename ) {
     return new Promise( function( resolve, reject ) {
         if ( !subject ) {
             resolve( null );
-        } else if (instanceAttachments && instanceAttachments.hasOwnProperty(subject)){
-	    resolve( instanceAttachments[subject] );
-	} else if ( typeof subject === 'string' ) {
-	    if ( !store.isAvailable() ) {
+        } else if ( typeof subject === 'string' ) {
+            if (instanceAttachments and (instanceAttachments.hasOwnProperty(subject)){
+                resolve(instanceAttachments[subject]);
+	    } else if ( !store.isAvailable() ) {
                 // e.g. in an online-only edit view
                 reject( new Error( 'store not available' ) );
             } else {
