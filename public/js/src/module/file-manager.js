@@ -66,7 +66,7 @@ function getFileUrl( subject, filename ) {
     return new Promise( function( resolve, reject ) {
         if ( !subject ) {
             resolve( null );
-        } else if (instanceAttachments && instanceAttachments[subject]){
+        } else if (instanceAttachments && instanceAttachments.hasOwnProperty(subject)){
 	    resolve( instanceAttachments[subject] );
 	} else if ( typeof subject === 'string' ) {
 	    if ( !store.isAvailable() ) {
