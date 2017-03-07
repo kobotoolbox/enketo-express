@@ -37,7 +37,7 @@ function init( selector, data ) {
             }
 
             if (data.instanceAttachments){
-                fileManager.init(data.instanceAttachments);
+                fileManager.setInstanceAttachments(data.instanceAttachments);
             }
 
             form = new Form( formSelector, data, formOptions );

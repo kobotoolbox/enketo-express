@@ -24,9 +24,7 @@ var instanceAttachments;
  * Initialize the file manager .
  * @return {[type]} promise boolean or rejection with Error
  */
-function init(attachments) {
-
-    instanceAttachments = attachments;
+function init() {
 
     return new Promise( function( resolve, reject ) {
        	if ( supported ) {
@@ -54,6 +52,13 @@ function isWaitingForPermissions() {
 }
 
 /**
+ * Sets instanceAttachments containing filename:url map
+ * to use in getFileUrl 
+ */
+function setInstanceAttachments(attachments){
+    instanceAttachments=attachments;
+}
+/**
  * Obtains a url that can be used to show a preview of the file when used
  * as a src attribute.
  *
@@ -67,7 +72,7 @@ function getFileUrl( subject, filename ) {
             resolve( null );
         } else if ( typeof subject === 'string' ) {
             if (instanceAttachments && (instanceAttachments.hasOwnProperty(subject) ) ) {
-                resolve(instanceAttachments[subject]);
+                resolve( instanceAttachments[subject] );
 	    } else if ( !store.isAvailable() ) {
                 // e.g. in an online-only edit view
                 reject( new Error( 'store not available' ) );
@@ -195,6 +200,7 @@ module.exports = {
     notSupportedAdvisoryMsg: notSupportedAdvisoryMsg,
     isWaitingForPermissions: isWaitingForPermissions,
     init: init,
+    setInstanceAttachments: setInstanceAttachments,
     getFileUrl: getFileUrl,
     getCurrentFiles: getCurrentFiles,
     getCurrentFile: getCurrentFile
