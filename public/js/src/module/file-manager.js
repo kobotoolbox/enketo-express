@@ -62,13 +62,13 @@ function isWaitingForPermissions() {
  * @return {[type]}         promise url string or rejection with Error
  */
 function getFileUrl( subject, filename ) {
+
     return new Promise( function( resolve, reject ) {
         if ( !subject ) {
             resolve( null );
-        } else if ( typeof subject === 'string' ) {
-            if ( instanceAttachments && instanceAttachments[subject]) {
-                resolve(instanceAttachments[subject]);
-            }
+        } else if (instanceAttachments && instanceAttachments[subject]){
+	    resolve( instanceAttachments[subject] );
+	} else if ( typeof subject === 'string' ) {
 	    if ( !store.isAvailable() ) {
                 // e.g. in an online-only edit view
                 reject( new Error( 'store not available' ) );
