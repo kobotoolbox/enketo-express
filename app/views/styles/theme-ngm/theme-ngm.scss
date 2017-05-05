@@ -1,0 +1,56 @@
+// variables
+@import "variables";
+@import "../../../../node_modules/enketo-core/src/sass/core/variables";
+
+// mixins, in the right order
+@import "../../../../node_modules/enketo-core/src/sass/core/mixins";
+@import "../../../../node_modules/enketo-core/src/sass/formhub/mixins";
+@import "../../../../node_modules/enketo-core/src/sass/grid/mixins";
+@import "../component/mixins";
+
+// reset
+@import "../../../../node_modules/enketo-core/src/sass/core/reset";
+
+// common styles
+@import "../component/common";
+
+// utilities
+@import "../../../../node_modules/enketo-core/src/sass/core/utilities";
+
+// icons
+@import "../component/icons";
+
+// buttons
+@import "../component/buttons";
+
+// layout
+@import "../../../../node_modules/enketo-core/src/sass/core/layout";
+@import "../../../../node_modules/enketo-core/src/sass/core/pages";
+
+// components
+@import "../component/side-slider";
+@import "form-grid";
+@import "../component/form_header";
+@import "../component/form_footer";
+
+
+// Materialize
+
+// Mixins
+@import "components/prefixer";
+@import "components/mixins";
+@import "components/color";
+
+// Variables;
+@import "components/variables";
+
+// Reset
+@import "components/normalize";
+
+// fonts
+@import "components/roboto";
+@import "components/typography";
+@import "components/form";
+
+// custom style
+@import "style";

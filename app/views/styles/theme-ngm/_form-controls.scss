@@ -1,0 +1,121 @@
+input[type=text], input[type=password], input[type=url], input[type=email], input[type=file],  input[type=date], input[type=time], input[type=datetime], input[type=number], select, textarea {
+    @include form-control;
+}
+
+// fix readonly inputs inside widgets that are not actually 'readonly'
+input:not([readonly]) + .widget {
+    input[type=text], input[type=password], input[type=url], input[type=email], input[type=file],  input[type=date], input[type=time], input[type=datetime], input[type=number], select, textarea {
+        &[readonly] {
+            background-color: $input-bg;
+            cursor: auto;
+            &:hover {
+                background-color: $input-bg;
+            }
+        }
+    }
+}
+
+//
+// Forms
+// --------------------------------------------------
+
+// Normalize non-controls
+//
+// Restyle and baseline non-control form elements.
+
+fieldset {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    // Chrome and Firefox set a `min-width: -webkit-min-content;` on fieldsets,
+    // so we reset that to ensure it behaves more like a standard block element.
+    // See https://github.com/twbs/bootstrap/issues/12359.
+    min-width: 0;
+}
+
+/*legend {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin-bottom: $line-height-computed;
+    font-size: $font-size-base * 1.5;
+    line-height: inherit;
+    color: $legend-color;
+    border: 0;
+    border-bottom: 1px solid $legend-border-color;
+}*/
+
+// Override content-box in Normalize (* isn't specific enough)
+input[type="search"] {
+    @include box-sizing(border-box);
+}
+
+// Position radios and checkboxes better
+
+input[type="radio"],
+input[type="checkbox"] {
+    margin: 4px 0 0;
+    margin-top: 1px \9;
+    /* IE8-9 */
+    line-height: normal;
+}
+
+// Set the height of file controls to match text inputs
+input[type="file"] {
+    display: block;
+}
+
+// Make range inputs behave like textual form controls
+input[type="range"] {
+    display: block;
+    width: 100%;
+}
+
+// Make multiple select elements height not fixed
+
+select[multiple],
+select[size] {
+    height: auto;
+}
+
+// Focus for file, radio, and checkbox
+
+input[type="file"]:focus,
+input[type="radio"]:focus,
+input[type="checkbox"]:focus {
+    @include tab-focus;
+}
+
+// Search inputs in iOS
+//
+// This overrides the extra rounded corners on search inputs in iOS so that our
+// `.form-control` class can properly style them. Note that this cannot simply
+// be added to `.form-control` as it's not specific enough. For details, see
+// https://github.com/twbs/bootstrap/issues/11586.
+
+input[type="search"] {
+    -webkit-appearance: none;
+}
+
+// Special styles for iOS date input
+//
+// In Mobile Safari, date inputs require a pixel line-height that matches the
+// given height of the input.
+
+input[type="date"] {
+    line-height: $input-height;
+}
+
+// Apply same disabled cursor tweak as for inputs
+//
+// Note: Neither radios nor checkboxes can be readonly.
+
+input[type="radio"],
+input[type="checkbox"] {
+    &[disabled],
+    fieldset[disabled] & {
+        cursor: not-allowed;
+    }
+}
+
+@import "radiocheck";

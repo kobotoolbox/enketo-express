@@ -1,0 +1,41 @@
+/** GRID THEME **/
+
+$font-size-base: 16px;
+
+// colors
+$brand-primary-color: #ee6e73;
+$brand-secondary-color: #e4f4ff;
+$radiocheck-unchecked-color: #666666;
+$radiocheck-checked-color: black;
+$question-bg: white;
+$question-hover-bg: none;
+$question-focus-bg: none;
+$input-highlight: #009688;
+$input-bg: transparent;
+
+// grid
+$default-grid-width: 4;
+$max-columns: 10;
+$grid-border: none;
+
+// questions
+$question-margin: 0;
+$q-pad-top: 6px;
+$q-pad-right: 6px;
+$q-pad-bottom: 13px;
+$q-pad-left: 6px;
+$question-padding: $q-pad-top $q-pad-right $q-pad-bottom $q-pad-left;
+
+// notes
+$note-border-radius: 0;
+
+// general form elements
+$groupline: #bbbbbb;
+$line: 3px solid $groupline;
+$input-height: 34px;
+$input-min-width: 0.2 * 720px;
+$input-max-width: 80%;
+
+// reponsiveness
+$max-content-width: 1100px;
+$main-breakpoint: $max-content-width;

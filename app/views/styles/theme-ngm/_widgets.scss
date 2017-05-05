@@ -1,0 +1,125 @@
+//widget scss overrides
+
+.question .geopoint.widget {
+    input[type=number], input[type=text] {
+        @extend .form-control;
+        &[name=alt], &[name=acc] {
+            width: 40%;
+        }
+    }
+}
+
+.widget.date,
+.widget.bootstrap-timepicker,
+.widget.datetimepicker {
+    @include display-flex;
+    @include flex-wrap(no-wrap);
+    @include flex-direction(row);
+}
+
+.question .widget.datetimepicker {
+    .date, .bootstrap-timepicker {
+        @include flex(1);
+        input {
+            width: auto;
+        }
+        .btn-reset {
+            float: right;
+        }
+    }
+}
+
+.or[dir="rtl"] .question .widget.datetimepicker {
+    .date, .bootstrap-timepicker {
+        .btn-reset {
+            float: left;
+        }
+    }
+}
+
+.or-appearance-likert .option-wrapper > label .option-label {
+    border-top-width: 1.5px;
+}
+
+// tables
+.question.or-appearance-list-nolabel, .question.or-appearance-label {
+    margin: 0;
+    &:not(:last-child) {
+        border-bottom: none;
+    }
+}
+
+.or-appearance-label {
+    padding-bottom: 0;
+}
+
+.touch {
+    .question:not(.or-appearance-compact):not(.or-appearance-quickcompact):not(.or-appearance-label):not(.or-appearance-list-nolabel):not(.or-appearance-likert) {
+        // touch radio buttons and checkboxes
+        .option-wrapper > label {
+            border: none;
+            @include border-radius(0);
+            &[data-checked] {
+                background-color: transparent;
+            }
+        }
+    }
+}
+
+// geopoint widget
+.question .geopicker.widget {
+    input[type=text], input[type=number], textarea {
+        @include border-radius(0);
+        @include box-shadow-none;
+        border: none;
+        border-bottom: 1px dotted #cccccc;
+        background-color: transparent;
+    }
+    input[type=text][name=search] {
+        width: 80%;
+    }
+    textarea {
+        // because textarea has placeholder
+        padding-top: 10px;
+    }
+    label.geo.alt {
+        border-top: none;
+    }
+    .btn:not(.close-chain-btn) {
+        background: transparent;
+        border: none;
+        &:hover {
+            opacity: 0.6;
+        }
+    }
+    .map-canvas-wrapper, .search-bar {
+        border-left: none;
+    }
+    &:not(.full-screen).hide-input {
+        &.wide {
+            .map-canvas {
+                height: 450px;
+            }
+        }
+    }
+    .toggle-input-btn:not(.open) {
+        left: 0;
+    }
+}
+
+html:not(.touch) .question .geopoint.widget {
+    .search-bar {
+        button.btn {
+            border: none;
+            background: transparent;
+            @include border-radius(0);
+            &:hover {
+                background: transparent;
+                color: #aaaaaa;
+            }
+        }
+        [name=search] ~ .input-group-btn .btn {
+            border-bottom: 1px dotted #cccccc;
+        }
+    }
+}

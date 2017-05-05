@@ -1,0 +1,279 @@
+@import "widgets";
+@import "form-controls";
+
+/** core/layout **/
+body, .main, .paper, .or, .or-group, .or-group-data, .or-repeat, .question {
+    position: relative;
+}
+
+body {
+    line-height: 20px;
+}
+
+.paper {
+    border-width: 1px;
+    @include border-radius(0);
+    box-shadow: 0 0 5px #888;
+}
+
+/** core/main **/
+.or-group {
+    margin: 0;
+    border-top: none;
+    .or-group {
+        margin: 0;
+    }
+}
+
+h4 + .or-repeat {
+    border-top: none;
+}
+
+// trick to hide group border on screen view
+.or h4 {
+    background: #ffffff;
+    margin: 0 -1px 0 0;
+    padding: 12px $q-pad-right $q-pad-right $q-pad-left;
+}
+
+// flexboxes
+.or, .or-group, .or-group-data, .or-repeat {
+    @include display-flex;
+    @include flex-wrap(wrap);
+    @include flex-direction(row);
+    @include border-box;
+}
+
+// override to flexboxes in pages mode, except when question = page
+.pages.or [role="page"].current:not(.question) {
+    @include display-flex;
+    @include flex-wrap(wrap);
+    @include flex-direction(row);
+    @include border-box;
+    .or-group:not(.disabled), .or-group-data:not(.disabled), .or-repeat:not(.disabled) {
+        @include display-flex;
+        @include flex-wrap(wrap);
+        @include flex-direction(row);
+        @include border-box;
+    }
+}
+
+// top-level groups border
+.or > .or-group, .or > .or-group-data {
+    border-right: $grid-border;
+}
+
+// top-level data-group (without title) that is the first element after the form title
+.or > #form-title + .or-group-data {
+    border-top: $grid-border;
+}
+
+// top-level questions border
+.or > .question, .or > .note {
+    border: $grid-border;
+    // This is cheating for top-level questions to avoid thick double borders.
+    // Normally, recommend to group everything.
+    margin-left: -1px;
+    margin-top: -1px;
+}
+
+// undo default for visually merged successive notes
+.note:not(.disabled) + .note {
+    margin-top: 0;
+    border-top: none;
+    border-bottom: $grid-border;
+    &.last-of-class {
+        border-bottom: $grid-border;
+        margin-bottom: 0;
+    }
+}
+
+// griddable elements - ie. wrappers around questions and notes
+.question, .note {
+    @include flex(1, 1);
+    @include border-box;
+    border-bottom: $grid-border;
+    border-left: $grid-border;
+    // overrides note border
+    border-right: none;
+    // overrides note border
+    border-top: none;
+    position: relative;
+    margin: $question-margin;
+    padding: $question-padding;
+}
+
+.note {
+    font-weight: normal;
+    font-size: 12px;
+}
+
+// display: flex messes up img size so apply it sparingly only to questions
+// and not to notes. We loose the ability to display image labels nicely in 
+// questions (though fine in tables)
+.question, .note {
+    @include display-flex;
+    @include flex-wrap(no-wrap);
+    @include flex-direction(column);
+    cursor: text;
+    &:not(.note):not(.focus):hover {
+        background: $question-hover-bg;
+    }
+    &.focus {
+        background: $question-focus-bg;
+    }
+    .required {
+        position: absolute;
+        top: -2px;
+        right: 0;
+    }
+    .required-subtle {
+        position: absolute;
+        bottom: 0;
+        right: 2px;
+        font-size: 9px;
+    }
+    &.invalid-constraint, &.invalid-required {
+        border-radius: 0;
+        margin: $question-margin;
+        padding: $question-padding;
+    }
+    .question-label {
+        text-transform: uppercase;
+        font-weight: normal;
+        font-size: 12px;
+        order: 1;
+    }
+    .or-hint.active {
+        order: 2;
+    }
+    audio, video, img {
+        order: 3;
+    }
+    input[type=text], input[type=password], input[type=url], input[type=email], input[type=file],  input[type=date], input[type=time], input[type=datetime], input[type=number], textarea {
+        width: 100%;
+    }
+    textarea {
+        min-height: 2 * $input-height;
+    }
+    .file-feedback {
+        order: 4;
+    }
+    // the use of the :not(.ignore) selector may not work forever
+    // but so far only those input inside widgets have that class
+    input:not(.ignore), textarea, select, .widget, .option-wrapper {
+        order: 4;
+    }
+    .or-constraint-msg, .or-required-msg {
+        order: 5;
+    }
+}
+
+.or[dir="rtl"] .question {
+    .required {
+        right: auto;
+        left: 0;
+    }
+    .required-subtle {
+        right: auto;
+        left: 2px;
+    }
+}
+
+.touch {
+    input[type=text], input[type=password], input[type=url], input[type=email], input[type=file],  input[type=date], input[type=time], input[type=datetime], input[type=number], textarea, select {
+        border: none;
+    }
+}
+
+.or-hint.active {
+    padding-top: 0;
+    line-height: 12px;
+}
+
+.option-wrapper > label {
+    margin-left: 0;
+}
+
+.or-repeat {
+    margin: 0;
+    padding: 0;
+    background: $repeat-bg;
+    &.clone {}
+    .repeat-number {
+        position: absolute;
+        left: 100%;
+        padding-left: 4px;
+        z-index: 10;
+        height: auto;
+        float: none;
+        color: #bbb;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .repeat-buttons {
+        width: calc(100% + 1px);
+        position: relative;
+        margin-top: 0;
+    }
+    .repeat, .remove {
+        padding: 0;
+        border: none;
+        margin-top: -20px;
+    }
+    .repeat {
+        float: right;
+        margin-right: -19px;
+    }
+    .remove {
+        float: left;
+        margin-left: -18px;
+    }
+}
+
+//wrappers around questions
+.or-group, .or-group-data, .or-repeat {
+    @include flex(1, 1);
+}
+
+legend {
+    margin-bottom: 8px;
+}
+
+.or {
+    h3 {
+        @include flex(1, 1);
+        padding-top: 0;
+        text-align: inherit;
+    }
+    h4 {
+        @include flex(1, 1);
+        //or just width: 100%;
+        border-bottom: 1px solid #666666;
+        padding-bottom: 5px;
+        margin-bottom: 0;
+    }
+}
+
+// the awesome grid
+@media print, screen and (min-width: 600px) {
+    @for $total from 1 through $max-columns {
+        .or-appearance-w#{$total} {
+            //default total of 4 if not provided
+            @include flex_IEhack($total, $default-grid-width);
+            //the actual proper grid
+            @for $width from 1 through $total {
+                .or-appearance-w#{$width} {
+                    @include flex_IEhack($width, $total);
+                }
+            }
+        }
+    }
+}
+
+@media print, screen and (min-width: 1100px) and (max-width: 1200px) {
+    // correction
+    .paper .or .form-logo {
+        margin-top: 0;
+    }
+}
