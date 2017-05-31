@@ -25,6 +25,7 @@ var survey = {
     serverUrl: settings.serverUrl,
     xformId: settings.xformId,
     xformUrl: settings.xformUrl,
+    manifestUrl: settings.manifestUrl,
     defaults: settings.defaults,
     noHashes: !settings.offline
 };

@@ -32,6 +32,9 @@ var settingsMap = [ {
     q: 'form',
     s: 'xformUrl'
 }, {
+    q: 'manifest',
+    s: 'manifestUrl'
+}, {
     q: 'id',
     s: 'xformId'
 }, {
