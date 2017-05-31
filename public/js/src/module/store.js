@@ -315,7 +315,7 @@ surveyStore = {
                     enketoId: survey.enketoId,
                     hash: survey.hash,
                     theme: survey.theme,
-                    resources: resourceKeys,
+                    resources: survey.resources,
                     maxSize: survey.maxSize,
                     externalData: survey.externalData,
                     branding: survey.branding
